@@ -1,0 +1,31 @@
+-Entities
+	-persitance? (probably not, or just with a few people)
+temporary account creation, speech requests and responses
+-UI
+	-multiple UI's
+	-cross network?
+-Floaty head?
+	-2d?
+	-3d?
+-facial recognition
+	-entity recognition
+	-emotion?
+-text to speech
+	-use in conjunction with other analyses?
+-speech recognition
+	-entity recognition?
+	-context parsing
+	-emotion recognition
+-image analysis
+	-entity recognition
+	-upload from HDD
+	-camera capture
+-video analysis
+	-entity recognition
+	-frame analysis
+	-cross network?
+-must have swazz
+	-muchos swazz
+
+--------------------------------------
+observer pattern to businesses
