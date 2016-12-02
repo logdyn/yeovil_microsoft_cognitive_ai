@@ -1,0 +1,7 @@
+visual studio
+
+sql server express
+
+MVC
+
+ISS server (possible)
