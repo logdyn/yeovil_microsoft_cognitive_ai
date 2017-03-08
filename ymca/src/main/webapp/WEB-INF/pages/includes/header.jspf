@@ -1,0 +1,88 @@
+		<%@ page import="java.security.Principal"%>
+		<%@ page import="storage.UserCache"%>
+		<%!
+			/**
+			 * creates a <code>&lt;li&gt;</code> element containing the name text and linking to the address.
+			 *
+			 * @param name the name the user will see.
+			 * @param address the address to navigate to when clicked.
+			 * @param request used to determin if currently on this page.
+			 */
+			private String addNavItem(final ServletRequest request, final String name, final String address)
+			{
+				final String uri = (String) request.getAttribute("javax.servlet.forward.request_uri");
+				final String context = ((HttpServletRequest) request).getContextPath();
+				final StringBuilder results = new StringBuilder();
+				results.append("<li");
+				if (uri.equals(context + address))
+				{
+					results.append(" class=\"active\"");
+				}
+				results.append("><a href=\"").append(context + address).append("\">").append(name).append("</a></li>");
+				return results.toString();
+			}
+		%>
+		<header class="navbar navbar-default">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+				        <span class="icon-bar"></span>
+				        <span class="icon-bar"></span>
+				        <span class="icon-bar"></span> 
+				    </button>
+					<a class="navbar-brand" href="<%=((HttpServletRequest) request).getContextPath()%>/">Yeovil Healthcare Products</a>
+				</div>
+				<div class="collapse navbar-collapse" id="myNavbar">
+					<ul class="nav navbar-nav">
+						<%=addNavItem(request, "Products", "/") %>
+						<%=addNavItem(request, "Order", "/Order") %>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<%					
+						//Sign up
+						final Principal user = request.getUserPrincipal();
+						String userLabel = "<span class='glyphicon glyphicon-user'></span> ";
+						if (null == user)
+						{
+							userLabel += "Sign Up";
+							%><%=addNavItem(request, userLabel,"/SignUp")%><%
+						}
+						else
+						{
+							userLabel += UserCache.getInstance().getUser(user.getName()).getForename();
+							%><%=addNavItem(request, userLabel,"/Account")%><%
+						}
+						
+						
+						//Login
+						if (null == user)
+						{
+							%><li><a href="#loginModal" data-toggle="modal"><span class='glyphicon glyphicon-log-in'></span> Login</a></li><%
+						}
+						else
+						{
+							//Logout
+							%><%=addNavItem(request, "<span class='glyphicon glyphicon-log-out'></span> Logout", "/Logout")%><%
+						}
+						%>
+						
+					</ul>
+				</div>
+		</header>
+		<div id="loginModal" class="modal fade" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+        				<h4 class="modal-title">Login</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<form id="loginForm" method="post">
+								<input type="hidden" name="auth" value="true" />
+				        	<%@ include file="./loginForm.jspf" %>
+				        	</form>
+			        	</div>
+				    </div>
+				</div>
+			</div>
+		</div>

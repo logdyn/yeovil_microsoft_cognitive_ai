@@ -25,10 +25,10 @@
     	<version>9.0.0.M15</version>
     </dependency>
     <dependency>
-    	<groupId>commons-dbutils</groupId>
-    	<artifactId>commons-dbutils</artifactId>
-    	<version>1.6</version>
-    </dependency>
+	    <groupId>commons-dbutils</groupId>
+	    <artifactId>commons-dbutils</artifactId>
+	    <version>1.6</version>
+	</dependency>
   </dependencies>
   <build>
     <finalName>ymca</finalName>

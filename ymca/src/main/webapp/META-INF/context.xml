@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<Context>
+	<Resource name="jdbc/YHP" auth="Container" type="javax.sql.DataSource"
+		username="YHPuser" password="YHPpassword" driverClassName="org.postgresql.Driver"
+		url="jdbc:postgresql://127.0.0.1:5432/YHP?autoReconnect=true&amp;useSSL=false"
+		maxActive="15" maxIdle="3" />
+	<Logger className="org.apache.catalina.logger.FileLogger"
+		prefix="localhost_intranet_log." suffix=".txt" timestamp="true" />
+	<Realm className="org.apache.catalina.realm.JDBCRealm" debug="99"
+		driverName="org.postgresql.Driver"
+		connectionURL="jdbc:postgresql://localhost/YHP?user=YHPuser&amp;password=YHPpassword"
+		userTable="users" userNameCol="user_name" userCredCol="user_pass"
+		userRoleTable="user_roles" roleNameCol="role_name">
+		<CredentialHandler
+			className="org.apache.catalina.realm.SecretKeyCredentialHandler"
+			algorithm="PBKDF2WithHmacSHA512" keyLength="256" />
+	</Realm>
+</Context>
