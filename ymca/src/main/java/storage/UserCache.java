@@ -14,6 +14,7 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.AbstractListHandler;
 import org.apache.commons.dbutils.handlers.ColumnListHandler;
 
+import models.Address;
 import models.user.Digest;
 import models.user.User;
 import models.user.UserRole;
@@ -57,14 +58,14 @@ public class UserCache
 	
 	private List<User> getUsers(final Column column, final Object columnValue)
 	{
-		QueryRunner run = this.database.getQueryRunner();
+		final QueryRunner run = this.database.getQueryRunner();
 		List<User> foundUsers = null;
 		try
 		{
 			foundUsers = run.query("SELECT * FROM users WHERE " + column + "=?;",
 					new UserResultsSetHandler(), columnValue);
 		}
-		catch (SQLException e)
+		catch (final SQLException e)
 		{
 			e.printStackTrace();
 		}
@@ -84,7 +85,7 @@ public class UserCache
 	 */
 	public void putUser(final User user) throws SQLException
 	{
-		AsyncQueryRunner run = this.database.getAsyncQueryRunner();
+		final AsyncQueryRunner run = this.database.getAsyncQueryRunner();
 		run.update("INSERT INTO users (user_id, user_name, user_pass, forename, surname, address_id) VALUES (?,?,?,?,?,?)"
 		+ "ON CONFLICT (user_id) DO UPDATE SET user_name = EXCLUDED.user_name, user_pass=EXCLUDED.user_pass, forename=EXCLUDED.forename, surname=EXCLUDED.surname, address_id=EXCLUDED.address_id;",
 				user.getUuid(), user.getUsername(), user.getDigest().toString(), user.getForename(), user.getSurname(), user.getAddress().getId());
@@ -107,36 +108,36 @@ public class UserCache
 	 */
 	private class UserResultsSetHandler extends AbstractListHandler<User>
 	{
+		private ResultSet rs;
+		
+		private String getString(final Column column) throws SQLException
+		{
+			return this.rs.getString(column.toString());
+		}
+		
 		@Override
 		protected User handleRow(final ResultSet rs) throws SQLException
 		{
-			//user userBuilder to build a user object from data in the table row.
-			final User.Builder userBuilder = new User.Builder(
-					rs.getString(UserCache.Column.FORENAME.toString()),
-					rs.getString(UserCache.Column.SURNAME.toString()));
+			//Get the roles for this user form the roles table.
 			final QueryRunner roleRunner = UserCache.this.database.getQueryRunner();
 			final List<String> roles = roleRunner.query(
 					"SELECT role_name FROM user_roles WHERE user_name=?;",
-					new ColumnListHandler<String>(), rs.getString("user_name")); //Get the roles for this user form the roles table.
+					new ColumnListHandler<String>(), this.getString(Column.USER_NAME));
 			
-			userBuilder.role(UserRole.fromDatabaseValues(roles));
-			userBuilder.id(UUID.fromString(rs.getString(UserCache.Column.USER_ID.toString()))); //convert string to uuid
-			userBuilder.username(rs.getString(UserCache.Column.USER_NAME.toString()));
-			userBuilder.digest(Digest.fromEncrypted(rs.getString(UserCache.Column.USER_PASS.toString())));
-			// userBuilder.address(value); TODO add address getter.
-			return userBuilder.build();
+			return new User(
+					UUID.fromString(this.getString(Column.USER_ID)),
+					this.getString(Column.FORENAME), 
+					this.getString(Column.SURNAME),
+					Address.NULL,
+					UserRole.fromDatabaseValues(roles),
+					this.getString(Column.USER_NAME),
+					Digest.fromEncrypted(this.getString(Column.USER_PASS)));
 		}
 	}
 	
 	private enum Column
 	{
-		USER_ID,
-		USER_NAME,
-		USER_PASS,
-		FORENAME,
-		SURNAME,
-		ADDRESS_ID,
-		ROLE_NAME;
+		USER_ID, USER_NAME, USER_PASS, FORENAME, SURNAME, ADDRESS_ID, ROLE_NAME;
 
 		@Override
 		public String toString()
