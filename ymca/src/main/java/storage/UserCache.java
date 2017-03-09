@@ -43,11 +43,25 @@ public class UserCache
 	
 	public User getUser (final UUID id)
 	{
+		for (final User user : this.users)
+		{
+			if (user.getUuid().equals(id))
+			{
+				return user;
+			}
+		}
 		return this.getUsers(Column.USER_ID, id.toString()).get(0);
 	}
 	
 	public User getUser (final String username)
 	{
+		for (final User user : this.users)
+		{
+			if (user.getUsername().equals(username))
+			{
+				return user;
+			}
+		}
 		return this.getUsers(Column.USER_NAME, username).get(0);
 	}
 	
@@ -93,6 +107,7 @@ public class UserCache
 		{
 			run.update("INSERT INTO user_roles (user_name, role_name) VALUES (?,?) ON CONFLICT (user_name, role_name) DO NOTHING", user.getUsername(), rolename);
 		}
+		this.users.add(user);
 	}
 	
 	public boolean isUsernameTaken(final String username)
