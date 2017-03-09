@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE xml>
 <Context>
-	<Resource name="jdbc/YHP" auth="Container" type="javax.sql.DataSource"
-		username="YHPuser" password="YHPpassword" driverClassName="org.postgresql.Driver"
-		url="jdbc:postgresql://127.0.0.1:5432/YHP?autoReconnect=true&amp;useSSL=false"
+	<Resource name="jdbc/YMCA" auth="Container" type="javax.sql.DataSource"
+		username="YMCAuser" password="YMCApassword" driverClassName="org.postgresql.Driver"
+		url="jdbc:postgresql://localhost/YMCA?autoReconnect=true&amp;useSSL=false"
 		maxActive="15" maxIdle="3" />
 	<Logger className="org.apache.catalina.logger.FileLogger"
 		prefix="localhost_intranet_log." suffix=".txt" timestamp="true" />
 	<Realm className="org.apache.catalina.realm.JDBCRealm" debug="99"
 		driverName="org.postgresql.Driver"
-		connectionURL="jdbc:postgresql://localhost/YHP?user=YHPuser&amp;password=YHPpassword"
+		connectionURL="jdbc:postgresql://localhost/YMCA?user=YMCAuser&amp;password=YMCApassword"
 		userTable="users" userNameCol="user_name" userCredCol="user_pass"
 		userRoleTable="user_roles" roleNameCol="role_name">
 		<CredentialHandler
