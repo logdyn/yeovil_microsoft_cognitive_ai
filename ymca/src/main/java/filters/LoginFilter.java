@@ -13,21 +13,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.filters.FilterBase;
 import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 
 /**
  * Filter to allow logging in from any page.
  */
 public class LoginFilter extends FilterBase
 {
-
-    /**
-     * Default constructor.
-     */
-    public LoginFilter()
-    {
-        super();
-    }
-
+	private static final Log LOGGER = LogFactory.getLog(LoginFilter.class);
 	/**
 	 * @see Filter#init(FilterConfig)
 	 */
@@ -44,7 +37,7 @@ public class LoginFilter extends FilterBase
 	public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException
 	{
 		ServletRequest newRequest = request;
-		if (request instanceof HttpServletRequest && Boolean.parseBoolean(request.getParameter("auth")))
+		if (Boolean.parseBoolean(request.getParameter("auth")) && request instanceof HttpServletRequest)
 		{
 			final HttpServletRequest httpRequest = (HttpServletRequest) request;
 			if (httpRequest.getUserPrincipal() == null && "POST".equals(httpRequest.getMethod()))
@@ -56,12 +49,14 @@ public class LoginFilter extends FilterBase
 				}
 				catch (ServletException e)
 				{
-					System.err.println(e.getMessage() + " with username: " + httpRequest.getParameter("j_username"));
+					LoginFilter.LOGGER.info(e.getMessage() + " with username: " + httpRequest.getParameter("j_username"), e);
 					if (response instanceof HttpServletResponse)
 					{
-						httpRequest.authenticate((HttpServletResponse) response);
+						HttpServletResponse httpResponse = (HttpServletResponse) response;
+						httpResponse.sendRedirect(httpResponse.encodeRedirectURL("/Account"));
+						return;
 					}
-					return;
+					
 				}
 			}
 		}
@@ -81,7 +76,7 @@ public class LoginFilter extends FilterBase
 	@Override
 	protected Log getLogger()
 	{
-		return null;
+		return LoginFilter.LOGGER;
 	}
 	
 	/**
