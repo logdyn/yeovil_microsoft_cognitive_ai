@@ -29,11 +29,11 @@
 				        <span class="icon-bar"></span>
 				        <span class="icon-bar"></span> 
 				    </button>
-					<a class="navbar-brand" href="<%=((HttpServletRequest) request).getContextPath()%>/">Yeovil Healthcare Products</a>
+					<a class="navbar-brand" href="<%=((HttpServletRequest) request).getContextPath()%>/">Yeovil Microsoft Cognitive AI</a>
 				</div>
 				<div class="collapse navbar-collapse" id="myNavbar">
 					<ul class="nav navbar-nav">
-						<%=addNavItem(request, "Products", "/") %>
+						<%=addNavItem(request, "Home", "/") %>
 						<%=addNavItem(request, "Order", "/Order") %>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
