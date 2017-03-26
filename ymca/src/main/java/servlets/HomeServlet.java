@@ -1,7 +1,9 @@
 package servlets;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -32,7 +34,9 @@ public class HomeServlet extends HttpServlet
 	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException
 	{
 		final Module testModule = new Module("Test Module", "/WEB-INF/modules/test.jspf");
-		request.setAttribute("modules", Collections.singleton(testModule));
+		final List<Module> modules = Arrays.asList(new Module[Integer.parseInt(request.getParameter("count"))]);
+		Collections.fill(modules, testModule);
+		request.setAttribute("modules", modules);
 		request.getRequestDispatcher("/WEB-INF/pages/index.jsp").forward(request, response);
 	}
 
