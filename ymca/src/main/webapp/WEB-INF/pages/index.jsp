@@ -11,9 +11,15 @@
 		<title>Home</title>
 		<%
 		final Collection<Module> modules = (Collection<Module>) request.getAttribute("modules");
-		final int columns = (int) Math.ceil(Math.sqrt(modules.size()));
-		final int rows = (int) Math.ceil(modules.size() / (double) columns);
+		int columns = (int) Math.ceil(Math.sqrt(modules.size()));
+		int rows = (int) Math.ceil(modules.size() / (double) columns);
 		final int stretchedRows = (rows * columns) - modules.size();
+		if (Boolean.parseBoolean(request.getParameter("flip")))
+		{
+			final int temp = columns;
+			columns = rows;
+			rows = temp;
+		}
 		%>
 		<style>
 			.module
