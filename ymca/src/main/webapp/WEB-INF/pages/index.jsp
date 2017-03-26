@@ -15,6 +15,23 @@
 		final int rows = (int) Math.ceil(modules.size() / (double) columns);
 		final int stretchedRows = (rows * columns) - modules.size();
 		%>
+		<style>
+			.module
+			{
+				height: <%=1100 / rows %>px;
+				height: calc((100vh - 10em) / <%=rows%>);
+			}
+			.module .panel
+			{
+				height:95%;
+				height: calc(100% - 15px);
+			}
+			.module .panel-heading
+			{
+				padding-top: 1px;
+				padding-bottom: 1px;
+			}
+		</style>
 	</head>
 	<body>
 		<div class="container-fluid">
@@ -22,15 +39,11 @@
 			<h1>Hello World!</h1>
 			<div class="row">
 			<%
-			int c = 0; // current column index
+			int c = (stretchedRows > 0 ? 1 : 0); // current column index
 			int r = 0; // current row index
-			if (r < stretchedRows)
-			{
-				c++;
-			}
 			for (final Module module : modules)
 			{
-				if (c++ >= columns)
+				if (c++ == columns)
 				{
 					c = 1;
 					r++;

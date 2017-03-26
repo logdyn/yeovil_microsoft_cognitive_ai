@@ -33,8 +33,10 @@ public class HomeServlet extends HttpServlet
 	@Override
 	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException
 	{
-		final Module testModule = new Module("Test Module", "/WEB-INF/modules/test.jspf");
-		final List<Module> modules = Arrays.asList(new Module[Integer.parseInt(request.getParameter("count"))]);
+		final Module testModule = new Module("Test Module", "/WEB-INF/modules/test.html");
+		final String strCount = request.getParameter("count");
+		final int count = strCount == null ? 1 : Integer.parseInt(strCount);
+		final List<Module> modules = Arrays.asList(new Module[count]);
 		Collections.fill(modules, testModule);
 		request.setAttribute("modules", modules);
 		request.getRequestDispatcher("/WEB-INF/pages/index.jsp").forward(request, response);
