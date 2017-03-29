@@ -9,6 +9,10 @@
 }
 .panel-body
 {
-	height:97%;
-	height: calc(100% - 15px);
+	height:89%;
+	height: calc(100% - 1.65em);
+	padding: 0px;
+	background-color: black;
+	border-bottom-right-radius: 2px;
+	border-bottom-left-radius: 2px;
 }
