@@ -1,0 +1,14 @@
+@CHARSET "UTF-8";
+.nav
+{
+	margin: auto;
+}
+.glyphicon
+{
+	width: 1.28571429em;
+}
+.panel-body
+{
+	height:97%;
+	height: calc(100% - 15px);
+}
