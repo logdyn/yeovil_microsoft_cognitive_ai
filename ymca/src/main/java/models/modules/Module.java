@@ -8,7 +8,7 @@ import java.util.Set;
 public enum Module
 {
 	TEST("Test Module", "/WEB-INF/modules/test.html"),
-	WEBCAM("Webcam", "/WEB-INF/modules/webcam.html", "js/webcam.js");
+	WEBCAM("Webcam", "/WEB-INF/modules/webcam.html", "js/webcam.js", "js/xhttp.js", "css/webcam.css");
 	
 	private final String name;
 	private final String contentPath;
