@@ -36,7 +36,7 @@ public class HomeServlet extends HttpServlet
 		final String strCount = request.getParameter("count");
 		final int count = strCount == null ? 1 : Integer.parseInt(strCount);
 		final List<Module> modules = Arrays.asList(new Module[count]);
-		Collections.fill(modules, Module.TEST);
+		Collections.fill(modules, Module.WEBCAM);
 		request.setAttribute("modules", modules);
 		request.getRequestDispatcher("/WEB-INF/pages/index.jsp").forward(request, response);
 	}
