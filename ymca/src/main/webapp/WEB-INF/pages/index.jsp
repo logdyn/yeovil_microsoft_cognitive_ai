@@ -61,7 +61,7 @@
 			<h1>Hello World!</h1>
 			<div class="row">
 			<%
-			int c = (stretchedRows > 0 ? 1 : 0); // current column index
+			int c = 0; // current column index
 			int r = 0; // current row index
 			for (final Module module : modules)
 			{
@@ -69,13 +69,13 @@
 				{
 					c = 1;
 					r++;
-					if (r < stretchedRows)
+					if (rows - r <= stretchedRows)
 					{
 						c++;
 					}
 				}
 				%>
-				<div class="module col-sm-<%= 12 / (r < stretchedRows ? (columns - 1) : columns) %>">
+				<div class="module col-sm-<%= 12 / (rows - r <= stretchedRows ? (columns - 1) : columns) %>">
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<%=module.getName()%>
