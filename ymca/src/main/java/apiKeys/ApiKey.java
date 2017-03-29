@@ -1,4 +1,4 @@
-package ai_project.common.apiKeys;
+package apiKeys;
 
 import java.util.Collections;
 import java.util.NavigableSet;
@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import ai_project.common.time.TimeFactory;
+import time.TimeFactory;
 
 /**
  * This Class represents a Microsoft Cognitive Services Api Key.

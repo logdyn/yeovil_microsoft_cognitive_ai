@@ -1,7 +1,7 @@
 /**
  * 
  */
-package ai_project.common.apiKeys.storage;
+package apiKeys.storage;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -11,9 +11,9 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import ai_project.common.apiKeys.ApiKey;
-import ai_project.common.apiKeys.KeyType;
-import ai_project.common.apiKeys.storage.interfaces.AbstractReadableKeyStorage;
+import apiKeys.ApiKey;
+import apiKeys.KeyType;
+import apiKeys.storage.interfaces.AbstractReadableKeyStorage;
 
 /**
  * @author Matt

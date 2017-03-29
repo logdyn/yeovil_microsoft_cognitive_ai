@@ -1,8 +1,8 @@
-package ai_project.common.apiKeys.storage.interfaces;
+package apiKeys.storage.interfaces;
 
 import java.util.Collection;
 
-import ai_project.common.apiKeys.ApiKey;
+import apiKeys.ApiKey;
 import javafx.concurrent.Task;
 
 public abstract class AbstractReadableKeyStorage extends Task<Collection<ApiKey>>

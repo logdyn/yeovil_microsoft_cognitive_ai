@@ -1,9 +1,9 @@
-package ai_project.common.apiKeys;
+package apiKeys;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import ai_project.common.time.TimeFactory;
+import time.TimeFactory;
 
 /**
  * Enum used for the Type of API key.

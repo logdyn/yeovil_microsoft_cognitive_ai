@@ -1,7 +1,7 @@
 /**
  * 
  */
-package ai_project.common.apiKeys;
+package apiKeys;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;

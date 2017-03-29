@@ -1,7 +1,7 @@
 /**
  * 
  */
-package ai_project.common.apiKeys.storage;
+package apiKeys.storage;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -9,9 +9,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
-import ai_project.common.apiKeys.ApiKey;
-import ai_project.common.apiKeys.KeyType;
-import ai_project.common.apiKeys.storage.interfaces.AbstractWriteableKeyStorage;
+import apiKeys.ApiKey;
+import apiKeys.KeyType;
+import apiKeys.storage.interfaces.AbstractWriteableKeyStorage;
 
 /**
  * @author Matt
