@@ -19,7 +19,8 @@ var webcam = {
 	},
 
 	videoError : function(e) {
-		// do something
+		video.src = "resources/video_error.mp4";
+		console.log("Error loading Webcam");
 	},
 
 	//FOR THE LOVE OF GOD DON'T TOUCH IT, IT WORKS
