@@ -1,5 +1,6 @@
 package models.modules;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -11,7 +12,7 @@ public enum Module
 	
 	private final String name;
 	private final String contentPath;
-	private final Set<String> javascriptPaths;
+	private final Set<String> externalPaths;
 	
 	/**
 	 * Class Constructor.
@@ -23,7 +24,7 @@ public enum Module
 	{
 		this.name = name;
 		this.contentPath = contentPath;
-		this.javascriptPaths = Collections.emptySet();
+		this.externalPaths = Collections.emptySet();
 	}
 	
 	/**
@@ -31,13 +32,13 @@ public enum Module
 	 *
 	 * @param name - the name of this module
 	 * @param contentPath - the path of the jsp file to include in this module.
-	 * @param javascriptPath - the path of the javascript file required by this module.
+	 * @param externalResource - the path of the javascript/css file required by this module.
 	 */
-	private Module(final String name, final String contentPath, final String javascriptPath)
+	private Module(final String name, final String contentPath, final String externalResource)
 	{
 		this.name = name;
 		this.contentPath = contentPath;
-		this.javascriptPaths = Collections.singleton(javascriptPath);
+		this.externalPaths = Collections.singleton(externalResource);
 	}
 	
 	/**
@@ -45,13 +46,25 @@ public enum Module
 	 *
 	 * @param name - the name of this module
 	 * @param contentPath - the path of the jsp file to include in this module.
-	 * @param javascriptPath - the paths of any javascript files required by this module.
+	 * @param externalResources - the paths of any javascript or css files required by this module.
 	 */
-	private Module(final String name, final String contentPath, final Collection<? extends String> javascriptPath)
+	private Module(final String name, final String contentPath, final String... externalResources)
+	{
+		this(name,contentPath, Arrays.asList(externalResources));
+	}
+	
+	/**
+	 * Class Constructor.
+	 *
+	 * @param name - the name of this module
+	 * @param contentPath - the path of the jsp file to include in this module.
+	 * @param externalResources - the paths of any javascript or css files required by this module.
+	 */
+	private Module(final String name, final String contentPath, final Collection<? extends String> externalResources)
 	{
 		this.name = name;
 		this.contentPath = contentPath;
-		this.javascriptPaths = Collections.unmodifiableSet(new LinkedHashSet<>(javascriptPath));
+		this.externalPaths = Collections.unmodifiableSet(new LinkedHashSet<>(externalResources));
 	}
 	
 	/**
@@ -73,8 +86,8 @@ public enum Module
 	/**
 	 * @return the paths of any javascript files this module uses.
 	 */
-	public Set<String> getJavaScriptPaths()
+	public Set<String> getExternalPaths()
 	{
-		return this.javascriptPaths;
+		return this.externalPaths;
 	}
 }
