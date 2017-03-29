@@ -48,19 +48,15 @@ public class WebcamServlet extends HttpServlet
 	protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
 	        throws ServletException, IOException
 	{
-
-		try
-		{
 			final String data = request.getParameter("webcamImage");
-			System.out.println(data);
-			final byte[] imagedata = DatatypeConverter.parseBase64Binary(data.substring(data.indexOf(",") + 1));
+			//Decode image, for some reason decode() doesn't seem to handle '+'
+			String decodedData = java.net.URLDecoder.decode(data, "UTF-8");
+			decodedData = decodedData.replace(' ', '+');
+			final byte[] imagedata = DatatypeConverter.parseBase64Binary(decodedData.substring(decodedData.indexOf(",") + 1));
 			final BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imagedata));
+			
+			//TODO use image
 			ImageIO.write(bufferedImage, "png", new File("D:/img.png"));
-		}
-		catch (final Exception e)
-		{
-			e.printStackTrace();
-		}
 	}
 
 }
