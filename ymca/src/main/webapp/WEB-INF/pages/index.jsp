@@ -21,6 +21,12 @@
 			columns = rows;
 			rows = temp;
 		}
+		for (final String cssPath : ModuleUtils.getCssLinks(modules))
+		{
+			%>
+			<link rel="stylesheet" type="text/css" href="<%=cssPath%>">
+			<%
+		}
 		for (final String jsPath : ModuleUtils.getJavascriptLinks(modules))
 		{
 			%>
