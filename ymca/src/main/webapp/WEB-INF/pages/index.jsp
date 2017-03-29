@@ -35,10 +35,13 @@
 		}
 		%>
 		<style>
-			.module
+			@media (min-width:768px)
 			{
-				height: <%=1100 / rows %>px;
-				height: calc((100vh - 10em) / <%=rows%>);
+				.module
+				{
+					height: <%=1100 / rows %>px;
+					height: calc((100vh - 10em) / <%=rows%>);
+				}
 			}
 			.module .panel
 			{
