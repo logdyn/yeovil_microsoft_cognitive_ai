@@ -1,8 +1,8 @@
 var webcam = {
-	video : null,
+	videoElements : [],
 	callbacks : [],
 	init : function() {
-		video = document.querySelector(".videoElement");
+		videoElements = Array.from(document.getElementsByClassName("videoElement"));
 
 		navigator.getUserMedia = navigator.getUserMedia
 				|| navigator.webkitGetUserMedia || navigator.mozGetUserMedia
@@ -17,13 +17,22 @@ var webcam = {
 		xhttp.sendRequest(null, webcam.setId, 'IdServlet', 'GET');
 	},
 
-	handleVideo : function(stream) {
-		video.src = window.URL.createObjectURL(stream);
+	handleVideo : function(stream)
+	{
+		var objectURL = window.URL.createObjectURL(stream);
+		videoElements.forEach(function(v)
+		{
+			v.src = objectURL;
+		});
 	},
 
-	videoError : function(e) {
-		video.src = "resources/video_error.mp4";
-		console.log("Error loading Webcam");
+	videoError : function(error)
+	{
+		videoElements.forEach(function(v)
+		{
+			v.src = "resources/video_error.mp4";
+		})
+		console.error("Error loading Webcam");
 	},
 
 	setId : function(uuid) {
@@ -49,7 +58,7 @@ var webcam = {
 	// FOR THE LOVE OF GOD DON'T TOUCH IT, IT WORKS
 	captureImage : function() {
 		var canvas = document.createElement("canvas");
-		video = document.querySelector(".videoElement");
+		var video = videoElements[0];
 		canvas.height = video.videoHeight;
 		canvas.width = video.videoWidth;
 		var ctx = canvas.getContext("2d");
