@@ -78,7 +78,6 @@ public class WebcamServlet extends HttpServlet implements ObservableServlet
 			// Decode image, for some reason decode() doesn't seem to handle '+'
 			String decodedData = java.net.URLDecoder.decode(data, "UTF-8");
 			decodedData = decodedData.replace(' ', '+');
-			System.out.println(decodedData);
 			final byte[] imagedata = DatatypeConverter
 			        .parseBase64Binary(decodedData.substring(decodedData.indexOf(",") + 1));
 			final BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imagedata));
@@ -87,7 +86,7 @@ public class WebcamServlet extends HttpServlet implements ObservableServlet
 			this.notifyObservers(bufferedImage);
 
 			// Vision Request
-			final String imageResponse = "test";
+			final String imageResponse = "Sent webcam image to MS";
 
 			response.getOutputStream().println(imageResponse);
 		}
