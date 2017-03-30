@@ -1,7 +1,8 @@
-package apiKeys;
+package models.apiKeys;
 
 import java.util.Collections;
 import java.util.NavigableSet;
+import java.util.Observable;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -11,14 +12,14 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import time.TimeFactory;
+import models.time.TimeFactory;
 
 /**
  * This Class represents a Microsoft Cognitive Services Api Key.
  * 
  * @author Matt Rayner
  */
-public final class ApiKey implements Comparable<ApiKey>
+public final class ApiKey extends Observable implements Comparable<ApiKey>
 {
 
 	/** Value of API key. */
@@ -68,6 +69,8 @@ public final class ApiKey implements Comparable<ApiKey>
 		if(this.isValid())
 		{
 			this.timesUsed.add(Long.valueOf(TimeFactory.currentTimeMillis()));
+			this.setChanged();
+			this.notifyObservers(this.key);
 			return this.key;
 		}
 		else

@@ -1,4 +1,4 @@
-package businesses.video;
+package apiRequests;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -8,21 +8,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.concurrent.Callable;
 
 import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
 
-import apiKeys.ApiKey;
-import apiKeys.KeyMap;
-import apiKeys.KeyType;
-import javafx.concurrent.Task;
+import models.apiKeys.ApiKey;
+import models.apiKeys.KeyType;
+import storage.KeyCache;
 
 /**
  * Image Processing task.
  * 
  * @author Matt Rayner
  */
-public class VisionServiceRequest extends Task<String>
+public class VisionServiceRequest implements Callable<String>
 {
 	/** Web address of API server. */
 	private static final String WEB_ADDRESS = "https://api.projectoxford.ai/vision/v1.0/analyze?";
@@ -43,7 +43,6 @@ public class VisionServiceRequest extends Task<String>
 	public VisionServiceRequest(final BufferedImage imageToProcess, final toGet infoToGet)
 	{
 		super();
-		this.updateTitle("Processing Image");
 		this.image = imageToProcess;
 		this.toGet = infoToGet;
 		
@@ -64,10 +63,10 @@ public class VisionServiceRequest extends Task<String>
 	/**
 	 * {@inheritDoc}
 	 *
-	 * @see javafx.concurrent.Task#call()
+	 * @see java.util.concurrent.Callable#call()
 	 */
 	@Override
-	protected String call() throws IOException
+	public String call() throws IOException
 	{
 		return this.analyseImage(this.image, this.toGet);
 	}
@@ -82,34 +81,22 @@ public class VisionServiceRequest extends Task<String>
 	 */
 	private String analyseImage(final BufferedImage image, final toGet infoToGet) throws IOException
 	{
-		this.updateMessage("Opening Connection");
-		this.updateProgress(1, 4);
-		URL url = new URL(infoToGet.getURL(KeyMap.getInstance().get(KeyType.Vision)));
+		URL url = new URL(infoToGet.getURL(KeyCache.getInstance().getKey(KeyType.Vision)));
 		final HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 		connection.setRequestMethod("POST");
 		connection.setRequestProperty("Content-Type", "application/octet-stream");
 		connection.setRequestProperty("Content-Length", String.valueOf(0));
 		connection.setDoOutput(true);
-		if (this.isCancelled() || Thread.currentThread().isInterrupted())
-		{
-			this.updateMessage("Cancelled");
-			return null;
-		}
-		this.updateMessage("Sending Image");
-		this.updateProgress(2, 4);
 		//Send request
 	    DataOutputStream wr = new DataOutputStream (
 	        connection.getOutputStream());
 	    ImageIO.write(image, "jpg", wr);
 	    wr.close();
 	    
-		if (this.isCancelled() || Thread.currentThread().isInterrupted())
+		if (Thread.currentThread().isInterrupted())
 		{
-			this.updateMessage("Cancelled");
 			return null;
 		}
-	    this.updateMessage("Processing Image");
-	    this.updateProgress(3, 4);
 	    //Get Response
 	    InputStream is = connection.getInputStream();
 	    BufferedReader rd = new BufferedReader(new InputStreamReader(is));
@@ -120,8 +107,6 @@ public class VisionServiceRequest extends Task<String>
 	      response.append('\r');
 	    }
 	    
-	    this.updateMessage("Processing Complete");
-	    this.updateProgress(4, 4);
 	    rd.close();
 	    return response.toString();
 	}

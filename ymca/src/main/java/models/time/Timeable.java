@@ -1,4 +1,4 @@
-package time;
+package models.time;
 
 public interface Timeable {
 	/**

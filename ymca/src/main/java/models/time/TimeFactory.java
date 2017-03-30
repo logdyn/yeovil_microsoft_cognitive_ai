@@ -1,4 +1,4 @@
-package time;
+package models.time;
 
 import java.util.Calendar;
 

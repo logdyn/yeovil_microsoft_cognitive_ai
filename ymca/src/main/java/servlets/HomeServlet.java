@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -36,7 +37,8 @@ public class HomeServlet extends HttpServlet
 		final String strCount = request.getParameter("count");
 		final int count = strCount == null ? 1 : Integer.parseInt(strCount);
 		final List<Module> modules = Arrays.asList(new Module[count]);
-		Collections.fill(modules, Module.WEBCAM);
+		Collections.fill(modules, Module.TEST);
+		modules.set(0, Module.WEBCAM);
 		request.setAttribute("modules", modules);
 		request.getRequestDispatcher("/WEB-INF/pages/index.jsp").forward(request, response);
 	}

@@ -1,9 +1,9 @@
-package apiKeys;
+package models.apiKeys;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import time.TimeFactory;
+import models.time.TimeFactory;
 
 /**
  * Enum used for the Type of API key.

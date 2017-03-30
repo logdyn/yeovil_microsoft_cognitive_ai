@@ -1,7 +1,7 @@
 /**
  * 
  */
-package apiKeys;
+package models.apiKeys;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
@@ -21,19 +21,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class KeyMap implements Map<KeyType, ApiKey>
 {
-
-	public static final KeyMap INSTANCE = new KeyMap();
 	
 	private final Map<KeyType, SortedSet<ApiKey>> keySetMap;
 
-	private KeyMap()
+	public KeyMap()
 	{
 		this.keySetMap = new EnumMap<>(KeyType.class);
-	}
-	
-	public static KeyMap getInstance()
-	{
-		return KeyMap.INSTANCE;
 	}
 
 	/**
