@@ -1,5 +1,6 @@
 var webcam = {
 	video : null,
+	imageCallbacks : [],
 	init : function() {
 		video = document.querySelector(".videoElement");
 
@@ -23,24 +24,39 @@ var webcam = {
 		console.log("Error loading Webcam");
 	},
 
-	//FOR THE LOVE OF GOD DON'T TOUCH IT, IT WORKS
+	// FOR THE LOVE OF GOD DON'T TOUCH IT, IT WORKS
 	captureImage : function() {
 		var canvas = document.createElement("canvas");
 		video = document.querySelector(".videoElement");
 		canvas.height = video.videoHeight;
 		canvas.width = video.videoWidth;
 		var ctx = canvas.getContext("2d");
-		//assign current frame of video to canvas
+		// assign current frame of video to canvas
 		ctx.drawImage(video, 10, 10);
-		//get data URL
+		// get data URL
 		var dataURL = canvas.toDataURL();
-		//escape url, inc. manual stuff because escape() misses things
+		var timestamp = video.currentTime;
+		// escape url, inc. manual stuff because escape() misses things
 		dataURL = escape(dataURL);
-		dataURL=dataURL.replace("+", "%2B");
-		dataURL=dataURL.replace("/", "%2F");
-		//Send to servlet
-		xhttp.sendRequest('webcamImage=' + dataURL, null,
-				"WebcamServlet");
+		dataURL = dataURL.replace("+", "%2B");
+		dataURL = dataURL.replace("/", "%2F");
+		// Send to servlet
+		xhttp.sendRequest('webcamImage=' + dataURL + '&timestamp=' + timestamp,
+				function(responseText) {
+					webcam.processResponse(responseText, timestamp)
+				}, "WebcamServlet");
+	},
+
+	// Add a callback to be run after the image has been processed
+	addImageListener : function(callback) {
+		webcam.imageCallbacks.push(callback);
+	},
+
+	// run each callback
+	processResponse : function(responseText, timestamp) {
+		webcam.imageCallbacks.forEach(function(callback) {
+			callback(timestamp);
+		})
 	}
 }
 document.addEventListener('DOMContentLoaded', webcam.init, false);

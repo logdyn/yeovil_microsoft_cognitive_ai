@@ -1,16 +1,13 @@
 package servlets;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.DatatypeConverter;
 
 /**
  * Servlet implementation class WebcamServlet
@@ -18,6 +15,8 @@ import javax.xml.bind.DatatypeConverter;
 public class WebcamServlet extends HttpServlet
 {
 	private static final long serialVersionUID = 1L;
+	
+	private final Map<String, String> imageCache = new HashMap<>();
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -49,14 +48,19 @@ public class WebcamServlet extends HttpServlet
 	        throws ServletException, IOException
 	{
 			final String data = request.getParameter("webcamImage");
+			final String timestamp = request.getParameter("timestamp");
 			//Decode image, for some reason decode() doesn't seem to handle '+'
 			String decodedData = java.net.URLDecoder.decode(data, "UTF-8");
 			decodedData = decodedData.replace(' ', '+');
-			final byte[] imagedata = DatatypeConverter.parseBase64Binary(decodedData.substring(decodedData.indexOf(",") + 1));
-			final BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imagedata));
-			
-			//TODO use image
-			ImageIO.write(bufferedImage, "png", new File("D:/img.png"));
+			this.imageCache.put(decodedData, timestamp);
+		// final byte[] imagedata =
+		// DatatypeConverter.parseBase64Binary(decodedData.substring(decodedData.indexOf(",")
+		// + 1));
+		// final BufferedImage bufferedImage = ImageIO.read(new
+		// ByteArrayInputStream(imagedata));
+		//
+		// //TODO use image
+		// ImageIO.write(bufferedImage, "png", new File("D:/img.png"));
 	}
 
 }
