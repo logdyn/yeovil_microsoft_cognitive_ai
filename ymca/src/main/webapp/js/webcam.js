@@ -1,6 +1,7 @@
 var webcam = {
 	video : null,
-	imageCallbacks : [],
+	id : null,
+	callbacks : [],
 	init : function() {
 		video = document.querySelector(".videoElement");
 
@@ -13,6 +14,8 @@ var webcam = {
 				video : true
 			}, webcam.handleVideo, webcam.videoError);
 		}
+
+		xhttp.sendRequest(null, webcam.setId, 'UuidServlet', 'GET');
 	},
 
 	handleVideo : function(stream) {
@@ -22,6 +25,26 @@ var webcam = {
 	videoError : function(e) {
 		video.src = "resources/video_error.mp4";
 		console.log("Error loading Webcam");
+	},
+
+	setId : function(uuid) {
+		id = uuid;
+		xhttp.sendRequest('uuid=' + id, function() {
+			webcam.notifyListeners(id)
+		}, 'WebcamServlet');
+		console.info(id);
+	},
+
+	addListener : function(callback) {
+		if (typeof callback === "function") {
+			webcam.callbacks.push(callback);
+		}
+	},
+
+	notifyListeners : function(id) {
+		webcam.callbacks.forEach(function(callback) {
+			callback(id);
+		});
 	},
 
 	// FOR THE LOVE OF GOD DON'T TOUCH IT, IT WORKS
@@ -35,28 +58,16 @@ var webcam = {
 		ctx.drawImage(video, 10, 10);
 		// get data URL
 		var dataURL = canvas.toDataURL();
-		var timestamp = video.currentTime;
 		// escape url, inc. manual stuff because escape() misses things
-		dataURL = escape(dataURL);
-		dataURL = dataURL.replace("+", "%2B");
-		dataURL = dataURL.replace("/", "%2F");
+		dataURL = encodeURIComponent(dataURL);
 		// Send to servlet
-		xhttp.sendRequest('webcamImage=' + dataURL + '&timestamp=' + timestamp,
-				function(responseText) {
-					webcam.processResponse(responseText, timestamp)
-				}, "WebcamServlet");
+		xhttp.sendRequest('webcamImage=' + dataURL, webcam.processResponse,
+				"WebcamServlet");
 	},
 
-	// Add a callback to be run after the image has been processed
-	addImageListener : function(callback) {
-		webcam.imageCallbacks.push(callback);
-	},
-
-	// run each callback
-	processResponse : function(responseText, timestamp) {
-		webcam.imageCallbacks.forEach(function(callback) {
-			callback(timestamp);
-		})
+	processResponse : function(responseText) {
+		console.log(responseText);
 	}
 }
+
 document.addEventListener('DOMContentLoaded', webcam.init, false);

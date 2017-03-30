@@ -56,6 +56,12 @@
   	<description></description>
   	<servlet-class>servlets.WebcamServlet</servlet-class>
   </servlet>
+  <servlet>
+  	<servlet-name>UuidServlet</servlet-name>
+  	<display-name>UuiServlet</display-name>
+  	<description></description>
+  	<servlet-class>servlets.UuidServlet</servlet-class>
+  </servlet>
   <servlet-mapping>
   	<servlet-name>AccountServlet</servlet-name>
   	<url-pattern>/Account</url-pattern>
@@ -83,6 +89,10 @@
   <servlet-mapping>
   	<servlet-name>WebcamServlet</servlet-name>
   	<url-pattern>/WebcamServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>UuidServlet</servlet-name>
+  	<url-pattern>/UuidServlet</url-pattern>
   </servlet-mapping>
   <welcome-file-list>
   	<welcome-file>HomeServlet</welcome-file>
