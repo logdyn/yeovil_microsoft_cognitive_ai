@@ -70,7 +70,7 @@ public class KeyCache
 		{
 			return key;
 		}
-		final List<ApiKey> results = this.getKeys(Column.KEY_TYPE, keyType.toString());
+		final List<ApiKey> results = this.getKeys(Column.KEY_TYPE, keyType.name());
 		return !results.isEmpty() ? results.get(0) : null;
 	}
 	

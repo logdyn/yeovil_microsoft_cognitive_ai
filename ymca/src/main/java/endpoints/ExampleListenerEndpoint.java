@@ -30,7 +30,7 @@ public class ExampleListenerEndpoint extends Endpoint implements Observer
 	public void update(final ObservableServlet servlet, final Object image)
 	{
 		//send image to ms
-		session.getAsyncRemote().sendText("Example endpoint to MS");
+		this.session.getAsyncRemote().sendText("Example endpoint to MS");
 	}
 
 }

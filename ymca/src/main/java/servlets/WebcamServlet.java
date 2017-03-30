@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 
+import apiRequests.VisionServiceRequest;
 import endpoints.Observer;
 
 /**
@@ -52,8 +53,7 @@ public class WebcamServlet extends HttpServlet implements ObservableServlet
 	protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
 	        throws ServletException, IOException
 	{
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		super.doGet(request, response);
 	}
 
 	/**
@@ -72,6 +72,8 @@ public class WebcamServlet extends HttpServlet implements ObservableServlet
 			this.uuid = id;
 			WebcamServlet.servletInstances.put(this.uuid, this);
 			System.out.println(this.uuid);
+			response.setContentType("text/plain");
+			response.setContentLength(0);
 		}
 		else if (null != data)
 		{
@@ -86,13 +88,18 @@ public class WebcamServlet extends HttpServlet implements ObservableServlet
 			this.notifyObservers(bufferedImage);
 
 			// Vision Request
-			final String imageResponse = "Sent webcam image to MS";
-
-			response.getOutputStream().println(imageResponse);
+			final String imageResponse = new VisionServiceRequest(bufferedImage, VisionServiceRequest.toGet.DESCRIPTION).call();
+			
+			response.setContentLength(imageResponse.length());
+			response.setContentType("application/json");
+			response.getOutputStream().print(imageResponse);
 		}
 		else
 		{
-			response.getWriter().println("{error: One or more expected POST parameters missing}");
+			final String errorText = "{error: One or more expected POST parameters missing}";
+			response.setContentLength(errorText.length());
+			response.setContentType("application/json");
+			response.getWriter().print(errorText);
 		}
 	}
 	

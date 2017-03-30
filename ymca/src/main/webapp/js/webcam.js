@@ -1,6 +1,5 @@
 var webcam = {
 	video : null,
-	id : null,
 	callbacks : [],
 	init : function() {
 		video = document.querySelector(".videoElement");
@@ -15,7 +14,7 @@ var webcam = {
 			}, webcam.handleVideo, webcam.videoError);
 		}
 
-		xhttp.sendRequest(null, webcam.setId, 'UuidServlet', 'GET');
+		xhttp.sendRequest(null, webcam.setId, 'IdServlet', 'GET');
 	},
 
 	handleVideo : function(stream) {
