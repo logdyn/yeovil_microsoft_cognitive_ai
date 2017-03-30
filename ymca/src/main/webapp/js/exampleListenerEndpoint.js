@@ -26,4 +26,4 @@ var exampleEndpoint = {
 	}
 }
 
-exampleEndpoint.init();
+document.addEventListener('DOMContentLoaded', exampleEndpoint.init, false);
