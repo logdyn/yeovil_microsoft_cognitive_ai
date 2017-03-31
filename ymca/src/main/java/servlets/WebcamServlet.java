@@ -68,7 +68,6 @@ public class WebcamServlet extends HttpServlet implements ObservableServlet
 		{
 			this.uuid = id;
 			WebcamServlet.servletInstances.put(this.uuid, this);
-			System.out.println(this.uuid);
 			response.setContentType("text/plain");
 			response.setContentLength(0);
 		}
