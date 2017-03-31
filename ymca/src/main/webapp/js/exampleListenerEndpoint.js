@@ -9,7 +9,7 @@ var exampleEndpoint = {
 		webSocket.onopen = function() 
 		{
 			//webcam.addListener(exampleEndpoint.sendId);
-			exampleEndpoint.sendID(sessionId);
+			exampleEndpoint.sendId(sessionId);
 		};
 
 		webSocket.onmessage = function(message) {
