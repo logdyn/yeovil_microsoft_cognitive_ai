@@ -1,6 +1,5 @@
 package endpoints;
 
-import javax.websocket.CloseReason;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,6 +16,7 @@ public class ExampleListenerEndpoint extends Endpoint implements Observer
 {
 	private Session session;
 	private String sessionId;
+	
 	private static Logger LOGGER = Logger.getLogger(ExampleListenerEndpoint.class.getName());
 	@Override
 	public void onOpen(final Session session, final EndpointConfig ec)
@@ -34,6 +34,12 @@ public class ExampleListenerEndpoint extends Endpoint implements Observer
 		});
 	}
 
+	/**
+     * Event that is triggered when a session has closed.
+     *
+     * @param session       The session
+     * @param closeReason   Why the session was closed
+     */	
 	@Override
 	public void onClose(final Session session, final CloseReason closeReason)
 	{
