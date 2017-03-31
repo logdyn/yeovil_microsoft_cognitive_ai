@@ -1,5 +1,10 @@
 package endpoints;
 
+import javax.websocket.CloseReason;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.websocket.CloseReason;
 import javax.websocket.Endpoint;
 import javax.websocket.EndpointConfig;
 import javax.websocket.MessageHandler;
@@ -11,6 +16,8 @@ import servlets.WebcamServlet;
 public class ExampleListenerEndpoint extends Endpoint implements Observer
 {
 	private Session session;
+	private String sessionId;
+	private static Logger LOGGER = Logger.getLogger(ExampleListenerEndpoint.class.getName());
 	@Override
 	public void onOpen(final Session session, final EndpointConfig ec)
 	{
@@ -20,17 +27,32 @@ public class ExampleListenerEndpoint extends Endpoint implements Observer
 			@Override
 			public void onMessage(final String text)
 			{
-				System.out.println("Added example endpoint as observer");
+				LOGGER.log(Level.FINE, "Added example endpoint as observer");
+				sessionId = text;
 				WebcamServlet.servletInstances.get(text).addObserver(ExampleListenerEndpoint.this);
 			}
 		});
 	}
 
 	@Override
+	public void onClose(final Session session, final CloseReason closeReason)
+	{
+		LOGGER.log(Level.FINE, "Closed endpoint");
+		WebcamServlet.servletInstances.get(this.sessionId).deleteObserver(this);
+	}
+
+	@Override
 	public void update(final ObservableServlet servlet, final Object image)
 	{
 		//send image to ms
-		this.session.getAsyncRemote().sendText("Example endpoint to MS");
+		if (this.session.isOpen())
+		{
+			this.session.getAsyncRemote().sendText("Example endpoint to MS");
+			LOGGER.log(Level.FINE, "Successful update()");
+		}
+		else
+		{
+			LOGGER.log(Level.WARNING, "Attempted to use closed session");
+		}
 	}
-
 }
