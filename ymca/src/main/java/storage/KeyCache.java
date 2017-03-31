@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,7 +25,7 @@ import models.apiKeys.KeyType;
  * 
  * @author Matt Rayner
  */
-public class KeyCache
+public class KeyCache implements Observer
 {
 	private static Logger LOGGER = Logger.getLogger(KeyCache.class.getName());
 	
@@ -70,7 +72,7 @@ public class KeyCache
 		{
 			return key;
 		}
-		final List<ApiKey> results = this.getKeys(Column.KEY_TYPE, keyType.toString());
+		final List<ApiKey> results = this.getKeys(Column.KEY_TYPE, keyType.name());
 		return !results.isEmpty() ? results.get(0) : null;
 	}
 	
@@ -101,6 +103,7 @@ public class KeyCache
 		for (final ApiKey foundKey : foundKeys)
 		{
 			this.keys.put(foundKey.getKeyType(), foundKey);
+			foundKey.addObserver(this);
 		}
 		return foundKeys;
 	}
@@ -198,6 +201,22 @@ public class KeyCache
 		public String toString()
 		{
 			return this.name().toLowerCase();
+		}
+	}
+
+	@Override
+	public void update(final Observable o, final Object arg)
+	{
+		if (o instanceof ApiKey)
+		{
+			try
+			{
+				this.putKey((ApiKey) o);
+			}
+			catch (SQLException e)
+			{
+				KeyCache.LOGGER.log(Level.WARNING, e.getMessage(), e);
+			}
 		}
 	}
 }
