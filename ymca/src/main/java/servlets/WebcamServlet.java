@@ -82,13 +82,12 @@ public class WebcamServlet extends HttpServlet implements ObservableServlet
 			decodedData = decodedData.replace(' ', '+');
 			final byte[] imagedata = DatatypeConverter
 			        .parseBase64Binary(decodedData.substring(decodedData.indexOf(",") + 1));
-			final BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imagedata));
 
 			// send image to listeners
-			this.notifyObservers(bufferedImage);
+			this.notifyObservers(imagedata);
 
 			// Vision Request
-			final String imageResponse = new VisionServiceRequest(bufferedImage, VisionServiceRequest.toGet.DESCRIPTION).call();
+			final String imageResponse = new VisionServiceRequest(imagedata, VisionServiceRequest.toGet.DESCRIPTION).call();
 			
 			response.setContentLength(imageResponse.length());
 			response.setContentType("application/json");

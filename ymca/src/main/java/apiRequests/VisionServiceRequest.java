@@ -31,9 +31,10 @@ public class VisionServiceRequest implements Callable<String>
 	
 	/** The image to process. */
 	private final BufferedImage image;
+	/** The image to process as byte array.*/
+	private byte[] bytes;
 	/** Type of info to get. */
 	private final toGet toGet;
-	
 	/**
 	 * Class Constructor.
 	 *
@@ -44,8 +45,17 @@ public class VisionServiceRequest implements Callable<String>
 	{
 		super();
 		this.image = imageToProcess;
+		this.bytes = null;
 		this.toGet = infoToGet;
 		
+	}
+	
+	public VisionServiceRequest(final byte[] imageToProcess, final toGet infoToGet)
+	{
+		super();
+		this.image = null;
+		this.bytes = imageToProcess;
+		this.toGet = infoToGet;
 	}
 	
 	/**
@@ -68,7 +78,14 @@ public class VisionServiceRequest implements Callable<String>
 	@Override
 	public String call() throws IOException
 	{
-		return this.analyseImage(this.image, this.toGet);
+		if (this.image == null)
+		{
+			return this.analyseImage(this.bytes, this.toGet);
+		}
+		else
+		{
+			return this.analyseImage(this.image, this.toGet);
+		}
 	}
 	
 	/**
@@ -92,6 +109,36 @@ public class VisionServiceRequest implements Callable<String>
 	        connection.getOutputStream());
 	    ImageIO.write(image, "jpg", wr);
 	    wr.close();
+	    
+		if (Thread.currentThread().isInterrupted())
+		{
+			return null;
+		}
+	    //Get Response
+	    InputStream is = connection.getInputStream();
+	    BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+	    StringBuffer response = new StringBuffer();
+	    String line;
+	    while ((line = rd.readLine()) != null) {
+	      response.append(line);
+	      response.append('\r');
+	    }
+	    
+	    rd.close();
+	    return response.toString();
+	}
+	
+	private String analyseImage(final byte[] image, final toGet infoToGet) throws IOException
+	{
+		URL url = new URL(infoToGet.getURL(KeyCache.getInstance().getKey(KeyType.Vision)));
+		final HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+		connection.setRequestMethod("POST");
+		connection.setRequestProperty("Content-Type", "application/octet-stream");
+		connection.setRequestProperty("Content-Length", String.valueOf(0));
+		connection.setDoOutput(true);
+		//Send request
+	    connection.getOutputStream().write(image);
+	    connection.getOutputStream().close();
 	    
 		if (Thread.currentThread().isInterrupted())
 		{
