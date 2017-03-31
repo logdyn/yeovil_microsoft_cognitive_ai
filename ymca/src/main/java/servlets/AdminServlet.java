@@ -49,21 +49,6 @@ public class AdminServlet extends HttpServlet
 				case "createUsers":
 					//Database.getInstance().execute("CREATE TABLE public.users(id uuid NOT NULL, forename character varying(20), surname character varying(20), CONSTRAINT users_pkey PRIMARY KEY (id))");
 					break;
-				case "testUser":
-					System.out.println(UserCache.getInstance().getUser("test"));
-				case "genPass":
-				
-				try
-				{
-					DigestCredentialHandlerBase handler = new SecretKeyCredentialHandler();
-					handler.setAlgorithm("PBKDF2WithHmacSHA512");
-					System.out.println(handler.mutate("password"));
-				} catch (NoSuchAlgorithmException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-					
 				default:
 					break;
 			}

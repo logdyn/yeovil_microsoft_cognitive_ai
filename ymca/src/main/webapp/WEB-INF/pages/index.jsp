@@ -24,7 +24,7 @@
 		for (final String cssPath : ModuleUtils.getCssLinks(modules))
 		{
 			%>
-			<link rel="stylesheet" type="text/css" href="<%=cssPath%>">
+			<link rel="stylesheet" type="text/css" href="<%=cssPath%>" />
 			<%
 		}
 		for (final String jsPath : ModuleUtils.getJavascriptLinks(modules))
@@ -34,6 +34,7 @@
 			<%
 		}
 		%>
+		<script> var sessionId = "<%= session.getId()%>";</script>
 		<style>
 			@media (min-width:768px)
 			{

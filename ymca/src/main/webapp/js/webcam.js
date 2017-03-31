@@ -10,11 +10,12 @@ var webcam = {
 
 		if (navigator.getUserMedia) {
 			navigator.getUserMedia({
-				video : true
+				video : {facingMode: "user"}
 			}, webcam.handleVideo, webcam.videoError);
 		}
 
-		xhttp.sendRequest(null, webcam.setId, 'IdServlet', 'GET');
+		//xhttp.sendRequest(null, webcam.setId, 'IdServlet', 'GET');
+		webcam.setId(sessionId);
 	},
 
 	handleVideo : function(stream)
@@ -39,8 +40,7 @@ var webcam = {
 		id = uuid;
 		xhttp.sendRequest('uuid=' + id, function() {
 			webcam.notifyListeners(id)
-		}, 'WebcamServlet');
-		console.info(id);
+		}, 'WebcamServlet');;
 	},
 
 	addListener : function(callback) {

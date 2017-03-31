@@ -1,14 +1,11 @@
 package servlets;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -71,7 +68,6 @@ public class WebcamServlet extends HttpServlet implements ObservableServlet
 		{
 			this.uuid = id;
 			WebcamServlet.servletInstances.put(this.uuid, this);
-			System.out.println(this.uuid);
 			response.setContentType("text/plain");
 			response.setContentLength(0);
 		}
@@ -82,13 +78,12 @@ public class WebcamServlet extends HttpServlet implements ObservableServlet
 			decodedData = decodedData.replace(' ', '+');
 			final byte[] imagedata = DatatypeConverter
 			        .parseBase64Binary(decodedData.substring(decodedData.indexOf(",") + 1));
-			final BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imagedata));
 
 			// send image to listeners
-			this.notifyObservers(bufferedImage);
+			this.notifyObservers(imagedata);
 
 			// Vision Request
-			final String imageResponse = new VisionServiceRequest(bufferedImage, VisionServiceRequest.toGet.DESCRIPTION).call();
+			final String imageResponse = new VisionServiceRequest(imagedata, VisionServiceRequest.toGet.DESCRIPTION).call();
 			
 			response.setContentLength(imageResponse.length());
 			response.setContentType("application/json");

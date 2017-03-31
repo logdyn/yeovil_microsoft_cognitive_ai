@@ -8,7 +8,8 @@ var exampleEndpoint = {
 		webSocket = new WebSocket(origin + "/ymca/ExampleListenerEndpoint");
 		webSocket.onopen = function() 
 		{
-			webcam.addListener(exampleEndpoint.sendId);
+			//webcam.addListener(exampleEndpoint.sendId);
+			exampleEndpoint.sendId(sessionId);
 		};
 
 		webSocket.onmessage = function(message) {
