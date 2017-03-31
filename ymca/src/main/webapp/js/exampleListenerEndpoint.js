@@ -4,7 +4,8 @@ var exampleEndpoint = {
 		
 	init : function()
 	{
-		webSocket = new WebSocket("ws://localhost:8080/ymca/ExampleListenerEndpoint");
+		var origin = window.location.origin.replace("http://", "ws://");
+		webSocket = new WebSocket(origin + "/ymca/ExampleListenerEndpoint");
 		webSocket.onopen = function() 
 		{
 			webcam.addListener(exampleEndpoint.sendId);
