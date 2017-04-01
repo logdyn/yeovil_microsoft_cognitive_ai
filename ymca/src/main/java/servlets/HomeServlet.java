@@ -34,10 +34,12 @@ public class HomeServlet extends HttpServlet
 	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException
 	{
 		final String strCount = request.getParameter("count");
-		final int count = strCount == null ? 1 : Integer.parseInt(strCount);
+		int count = (strCount == null) ? 1 : Integer.parseInt(strCount);
+		if(count < 1) { count = 1;}
 		final List<Module> modules = Arrays.asList(new Module[count]);
 		Collections.fill(modules, Module.WEBCAM);
-		modules.set(0, Module.WEBCAM);
+		modules.set(0, Module.CONTROLS);
+		//modules.set(1, Module.CONTROLS);
 		request.setAttribute("modules", modules);
 		request.getRequestDispatcher("/WEB-INF/pages/index.jsp").forward(request, response);
 	}
