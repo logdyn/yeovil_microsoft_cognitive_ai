@@ -18,7 +18,7 @@ import endpoints.Observer;
 /**
  * Servlet implementation class WebcamServlet
  */
-public class WebcamServlet extends HttpServlet implements ObservableServlet
+public class WebcamServlet extends HttpServlet implements ObservableServerClass
 {
 	public static Map<String, WebcamServlet> servletInstances;
 
