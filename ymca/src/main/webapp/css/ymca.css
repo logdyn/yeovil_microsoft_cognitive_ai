@@ -17,3 +17,8 @@
 	border-bottom-right-radius: 2px;
 	border-bottom-left-radius: 2px;
 }
+:-webkit-full-screen
+{
+  width: 100%;
+  height: 100%;
+}

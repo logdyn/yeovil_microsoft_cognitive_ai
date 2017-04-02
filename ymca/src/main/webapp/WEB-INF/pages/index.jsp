@@ -34,6 +34,7 @@
 			<%
 		}
 		%>
+		<script src="js/modules.js"></script>
 		<script> var sessionId = "<%= session.getId()%>";</script>
 		<style>
 			@media (min-width:768px)
@@ -53,6 +54,12 @@
 			{
 				padding-top: 1px;
 				padding-bottom: 1px;
+			}
+			.close span.glyphicon
+			{
+				top: 0.55em;
+				right: 0.5em;
+				font-size: 0.5em;
 			}
 		</style>
 	</head>
@@ -80,7 +87,8 @@
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<%=module.getName()%>
-							<a class="close" aria-label="close">&times;</a>
+							<a class="close closeBtn" aria-label="close">&times;</a>
+							<a class="close fullscreenBtn"><span class="glyphicon glyphicon-fullscreen"></span></a>
 						</div>
 						<div class="panel-body">
 							<jsp:include page="<%=module.getContentpath()%>" />
