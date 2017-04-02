@@ -84,7 +84,7 @@ public class WebcamServlet extends HttpServlet implements ObservableServerClass
 			// send image to listeners
 			this.notifyObservers(imagedata);
 
-			LoggingEndpoint.log(id, Level.FINE, "Sending image to Vision Service");
+			LoggingEndpoint.log(request.getSession().getId(), Level.FINE, "Sending image to Vision Service");
 
 			// Vision Request
 			final String imageResponse = new VisionServiceRequest(imagedata, VisionServiceRequest.toGet.DESCRIPTION)

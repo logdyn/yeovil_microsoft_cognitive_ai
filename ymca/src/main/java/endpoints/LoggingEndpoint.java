@@ -25,6 +25,9 @@ public class LoggingEndpoint extends Endpoint
 	private static Map<String, Set<LoggingEndpoint>> endpoints = new HashMap<>();
 	private Session session;
 	private String sessionId;
+	
+	//used to set values from within anonymous MessageHandler
+	private LoggingEndpoint instance = this;
 
 	@Override
 	public void onOpen(Session session, EndpointConfig config)
@@ -36,14 +39,18 @@ public class LoggingEndpoint extends Endpoint
 			public void onMessage(String text)
 			{
 				sessionId = text;
+				if (null == LoggingEndpoint.endpoints.get(sessionId))
+				{
+					Set<LoggingEndpoint> set = new HashSet<>();
+					set.add(instance);
+					LoggingEndpoint.endpoints.put(sessionId, set);
+				}
+				else
+				{
+					LoggingEndpoint.endpoints.get(sessionId).add(instance);
+				}
 			}
 		});
-
-		if (null == LoggingEndpoint.endpoints.get(sessionId))
-		{
-			LoggingEndpoint.endpoints.put(sessionId, new HashSet<LoggingEndpoint>());
-			LoggingEndpoint.endpoints.get(sessionId).add(this);
-		}
 	}
 
 	/**
@@ -57,7 +64,7 @@ public class LoggingEndpoint extends Endpoint
 	@Override
 	public void onClose(final Session session, final CloseReason closeReason)
 	{
-		LoggingEndpoint.endpoints.remove(session.getId());
+		LoggingEndpoint.endpoints.remove(this.sessionId);
 	}
 
 	/**
