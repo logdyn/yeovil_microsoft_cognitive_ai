@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 
 import apiRequests.VisionServiceRequest;
+import endpoints.LoggingEndpoint;
 import endpoints.Observer;
 
 /**
@@ -82,19 +85,25 @@ public class WebcamServlet extends HttpServlet implements ObservableServerClass
 			// send image to listeners
 			this.notifyObservers(imagedata);
 
+			LoggingEndpoint.log(id, Level.FINE, "Sending image to Vision Service");
+			
 			// Vision Request
 			final String imageResponse = new VisionServiceRequest(imagedata, VisionServiceRequest.toGet.DESCRIPTION).call();
 			
-			response.setContentLength(imageResponse.length());
-			response.setContentType("application/json");
-			response.getOutputStream().print(imageResponse);
+			LoggingEndpoint.log(id, Level.INFO, imageResponse);
+			
+//			response.setContentLength(imageResponse.length());
+//			response.setContentType("application/json");
+//			response.getOutputStream().print(imageResponse);
 		}
 		else
 		{
-			final String errorText = "{error: One or more expected POST parameters missing}";
-			response.setContentLength(errorText.length());
-			response.setContentType("application/json");
-			response.getWriter().print(errorText);
+//			final String errorText = "{error: One or more expected POST parameters missing}";
+//			response.setContentLength(errorText.length());
+//			response.setContentType("application/json");
+//			response.getWriter().print(errorText);
+			
+			LoggingEndpoint.log(id, Level.SEVERE, "One or more parameters missing from the Vision Service Request, contact an Administrator");
 		}
 	}
 	
