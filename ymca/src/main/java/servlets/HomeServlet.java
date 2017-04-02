@@ -34,7 +34,7 @@ public class HomeServlet extends HttpServlet
 	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException
 	{
 		final String strCount = request.getParameter("count");
-		int count = (strCount == null) ? 1 : Integer.parseInt(strCount);
+		int count = (strCount == null) ? 2 : Integer.parseInt(strCount);
 		if(count < 1) { count = 1;}
 		final List<Module> modules = Arrays.asList(new Module[count]);
 		Collections.fill(modules, Module.WEBCAM);
