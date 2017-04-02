@@ -8,6 +8,7 @@ var loggingEndpoint = {
 			websocket = new WebSocket(origin + "/ymca/LoggingEndpoint");
 			websocket.onopen = function() 
 			{
+				//Sets up the logger instance with the correct session ID
 				loggingEndpoint.sendId(sessionId);
 			};
 			

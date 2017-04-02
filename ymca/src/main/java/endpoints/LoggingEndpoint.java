@@ -14,6 +14,11 @@ import javax.websocket.Session;
 
 import org.json.JSONObject;
 
+/**
+ * Endpoint Class used to log messages and send them to the client
+ * @author Jake Lewis
+ *
+ */
 public class LoggingEndpoint extends Endpoint
 {
 
@@ -55,11 +60,22 @@ public class LoggingEndpoint extends Endpoint
 		LoggingEndpoint.endpoints.remove(session.getId());
 	}
 
+	/**
+	 * Logs to all JavaScript Logging Endpoints for all sessions
+	 * @param level The log level e.g. INFO or SEVERE
+	 * @param message The message to display
+	 */
 	public static void log(Level level, String message)
 	{
 		LoggingEndpoint.log(null, level, message);
 	}
 
+	/**
+	 * Logs to all JavaScript Logging Endpoints for a specific session
+	 * @param sessionId The session to send the message to
+	 * @param level The log level e.g. INFO or SEVERE
+	 * @param message The message to display
+	 */
 	public static void log(String sessionId, Level level, String message)
 	{
 		JSONObject jsonMessage = new JSONObject();
