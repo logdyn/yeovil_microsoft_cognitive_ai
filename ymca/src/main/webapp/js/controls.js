@@ -17,9 +17,13 @@ var controls = {
 	{
 		event = event || window.event;
 		var videoElement = document.querySelector(".videoElement");
-		if (typeof videoElement !== "undefined" && videoElement.requestFullscreen)
+		if (typeof videoElement !== "undefined" && videoElement.requestFullscreen) 
 		{
 			videoElement.requestFullscreen();
+		}
+		else if(typeof videoElement !== "undefined" && videoElement.webkitRequestFullScreen)
+		{
+			videoElement.webkitRequestFullScreen();
 		}
 		else
 		{

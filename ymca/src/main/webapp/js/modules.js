@@ -28,6 +28,10 @@ var modules = {
 		{
 			target.requestFullscreen();
 		}
+		else if(target.webkitRequestFullScreen)
+		{
+			target.webkitRequestFullScreen();
+		}
 		else
 		{
 			console.warn("failed to make element fullscreen.", target);
