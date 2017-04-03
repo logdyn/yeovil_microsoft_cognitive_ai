@@ -1,8 +1,8 @@
 package endpoints;
 
-import servlets.ObservableServlet;
+import servlets.ObservableServerClass;
 
 public interface Observer
 {
-	public void update(final ObservableServlet servlet, final Object image);
+	public void update(final ObservableServerClass servlet, final Object image);
 }

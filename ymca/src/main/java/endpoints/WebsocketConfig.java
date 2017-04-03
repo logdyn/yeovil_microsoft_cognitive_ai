@@ -20,6 +20,7 @@ public class WebsocketConfig implements ServerApplicationConfig
 
 			{
 				this.add(ServerEndpointConfig.Builder.create(ExampleListenerEndpoint.class, "/ExampleListenerEndpoint").build());
+				this.add(ServerEndpointConfig.Builder.create(LoggingEndpoint.class, "/LoggingEndpoint").build());
 			}
 		};
 	}

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,12 +14,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 
 import apiRequests.VisionServiceRequest;
+import endpoints.LoggingEndpoint;
 import endpoints.Observer;
 
 /**
  * Servlet implementation class WebcamServlet
  */
-public class WebcamServlet extends HttpServlet implements ObservableServlet
+public class WebcamServlet extends HttpServlet implements ObservableServerClass
 {
 	public static Map<String, WebcamServlet> servletInstances;
 
@@ -48,7 +50,7 @@ public class WebcamServlet extends HttpServlet implements ObservableServlet
 	 */
 	@Override
 	protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
-	        throws ServletException, IOException
+			throws ServletException, IOException
 	{
 		super.doGet(request, response);
 	}
@@ -59,11 +61,11 @@ public class WebcamServlet extends HttpServlet implements ObservableServlet
 	 */
 	@Override
 	protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
-	        throws ServletException, IOException
+			throws ServletException, IOException
 	{
 		final String id = request.getParameter("uuid");
 		final String data = request.getParameter("webcamImage");
-		
+
 		if (null != id)
 		{
 			this.uuid = id;
@@ -77,27 +79,36 @@ public class WebcamServlet extends HttpServlet implements ObservableServlet
 			String decodedData = java.net.URLDecoder.decode(data, "UTF-8");
 			decodedData = decodedData.replace(' ', '+');
 			final byte[] imagedata = DatatypeConverter
-			        .parseBase64Binary(decodedData.substring(decodedData.indexOf(",") + 1));
+					.parseBase64Binary(decodedData.substring(decodedData.indexOf(",") + 1));
 
 			// send image to listeners
 			this.notifyObservers(imagedata);
 
+			LoggingEndpoint.log(request.getSession().getId(), Level.FINE, "Sending image to Vision Service");
+
 			// Vision Request
-			final String imageResponse = new VisionServiceRequest(imagedata, VisionServiceRequest.toGet.DESCRIPTION).call();
-			
-			response.setContentLength(imageResponse.length());
-			response.setContentType("application/json");
-			response.getOutputStream().print(imageResponse);
+			final String imageResponse = new VisionServiceRequest(imagedata, VisionServiceRequest.toGet.DESCRIPTION)
+					.call();
+
+			LoggingEndpoint.log(id, Level.INFO, imageResponse);
+
+			// response.setContentLength(imageResponse.length());
+			// response.setContentType("application/json");
+			// response.getOutputStream().print(imageResponse);
 		}
 		else
 		{
-			final String errorText = "{error: One or more expected POST parameters missing}";
-			response.setContentLength(errorText.length());
-			response.setContentType("application/json");
-			response.getWriter().print(errorText);
+			// final String errorText = "{error: One or more expected POST
+			// parameters missing}";
+			// response.setContentLength(errorText.length());
+			// response.setContentType("application/json");
+			// response.getWriter().print(errorText);
+
+			LoggingEndpoint.log(id, Level.SEVERE,
+					"One or more parameters missing from the Vision Service Request, contact an Administrator");
 		}
 	}
-	
+
 	@Override
 	public void addObserver(final Observer observer)
 	{
