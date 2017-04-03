@@ -1,4 +1,8 @@
 @CHARSET "UTF-8";
+body
+{
+    overflow: hidden;
+}
 .nav
 {
 	margin: auto;

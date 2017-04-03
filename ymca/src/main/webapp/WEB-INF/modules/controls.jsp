@@ -6,8 +6,11 @@
 %>
 <div class="col-sm-12">
 	<button class="capImage btn btn-success btn-lg btn-block<%=containsWebcam ? "" : " disabled"%>">
-		Capture Image <span class="glyphicon glyphicon-cloud-upload"></span>
+		Capture Single Image <span class="glyphicon glyphicon-cloud-upload"></span>
 	</button>
+    <button class="intervalCapturing btn btn-success btn-lg btn-block<%=containsWebcam ? "" : " disabled"%>">
+        Start Capturing <span class="glyphicon glyphicon-cloud-upload"></span>
+    </button>
 	<button class="videoFullscreen btn btn-default btn-lg btn-block<%=containsWebcam ? "" : " disabled"%>">
 		FullScreen <span class="glyphicon glyphicon-fullscreen"></span>
 	</button>

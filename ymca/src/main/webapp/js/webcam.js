@@ -73,8 +73,15 @@ var webcam = {
 				"WebcamServlet");
 	},
 
-	processResponse : function(responseText) {
-		console.log(responseText);
+	processResponse : function (responseText)
+    {
+		"use strict";
+        var responseJSON = JSON.parse(responseText);
+        var captionElement = Array.from(document.getElementsByClassName('videoCaption'));
+        captionElement.forEach(function (caption)
+        {
+            caption.innerHTML = responseJSON.description.captions[0].text;
+        });
 	}
 }
 
