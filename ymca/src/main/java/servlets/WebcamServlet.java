@@ -90,19 +90,18 @@ public class WebcamServlet extends HttpServlet implements ObservableServerClass
 			final String imageResponse = new VisionServiceRequest(imagedata, VisionServiceRequest.toGet.DESCRIPTION)
 					.call();
 
-			LoggingEndpoint.log(id, Level.INFO, imageResponse);
+			//LoggingEndpoint.log(id, Level.INFO, imageResponse);
 
-			// response.setContentLength(imageResponse.length());
-			// response.setContentType("application/json");
-			// response.getOutputStream().print(imageResponse);
+			 response.setContentLength(imageResponse.length());
+			 response.setContentType("application/json");
+			 response.getOutputStream().print(imageResponse);
 		}
 		else
 		{
-			// final String errorText = "{error: One or more expected POST
-			// parameters missing}";
-			// response.setContentLength(errorText.length());
-			// response.setContentType("application/json");
-			// response.getWriter().print(errorText);
+			 final String errorText = "{error: One or more expected POST parameters missing}";
+			 response.setContentLength(errorText.length());
+			 response.setContentType("application/json");
+			 response.getWriter().print(errorText);
 
 			LoggingEndpoint.log(id, Level.SEVERE,
 					"One or more parameters missing from the Vision Service Request, contact an Administrator");
