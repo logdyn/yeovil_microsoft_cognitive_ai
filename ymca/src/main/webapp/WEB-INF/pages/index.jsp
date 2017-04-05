@@ -12,8 +12,8 @@
 		<title>Home</title>
 		<%
 		final Collection<Module> modules = (Collection<Module>) request.getAttribute("modules");
-		int columns = (int) Math.ceil(Math.sqrt(modules.size()));
-		int rows = (int) Math.ceil(modules.size() / (double) columns);
+		int columns = ModuleUtils.getColumns(modules.size());
+		int rows = ModuleUtils.getRows(modules.size());
 		final int stretchedRows = (rows * columns) - modules.size();
 		if (Boolean.parseBoolean(request.getParameter("flip")))
 		{
@@ -41,8 +41,8 @@
 			{
 				.module
 				{
-					height: <%=1100 / rows %>px;
-					height: calc((100vh - 10em) / <%=rows%>);
+					height: <%=1100 / rows == 0 ? 1 : rows %>px;
+					height: calc((100vh - 10em) / <%= rows == 0 ? 1 : rows %>);
 				}
 			}
 			.module .panel
