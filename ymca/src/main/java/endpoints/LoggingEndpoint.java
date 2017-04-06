@@ -111,7 +111,7 @@ public class LoggingEndpoint extends Endpoint
 			}
 			else
 			{
-				System.err.println(String.format("no LoggingEndpoints regestered for session '%s'", sessionId));
+				System.err.println(String.format("No LoggingEndpoints regestered for session '%s'", sessionId));
 				System.err.println(level.getName() + ": " + message);
 			}
 		}

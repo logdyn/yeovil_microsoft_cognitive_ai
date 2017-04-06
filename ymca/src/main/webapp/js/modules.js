@@ -3,6 +3,7 @@ var modules = {
 	{
 		var closeBtns = Array.from(document.getElementsByClassName('closeBtn'));
 		var fullscreenBtns = Array.from(document.getElementsByClassName('fullscreenBtn'));
+        var addModuleBtns = Array.from(document.getElementsByClassName('addModuleBtn'));
 		
 		closeBtns.forEach(function(closeBtn)
 		{
@@ -13,6 +14,12 @@ var modules = {
 		{
 			fullscreenBtn.addEventListener('click', modules.fullscreen);
 		});
+        addModuleBtns.forEach(function (addModuleBtn)
+        {
+            addModuleBtn.addEventListener('click', function(event){
+                modules.addModules([addModuleBtn.textContent.trim()]);
+            });
+        });
 	},
 	close: function(event)
 	{

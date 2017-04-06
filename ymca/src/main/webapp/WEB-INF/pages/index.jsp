@@ -65,6 +65,22 @@
 	</head>
 	<body>
 		<div class="container-fluid">
+			<%
+			final StringBuilder moduleHtml = new StringBuilder();
+			moduleHtml.append("<li class='dropdown'><a class='dropdown-toggle' data-toggle='dropdown' href='#'>");
+			moduleHtml.append("Modules");
+			moduleHtml.append("<span class='caret'></span></a><ul class='dropdown-menu'>");
+			for (final Module module : Module.values())
+			{
+				moduleHtml.append("<li><a class='addModuleBtn' href='");
+				moduleHtml.append("#");
+				moduleHtml.append("'>");
+				moduleHtml.append(module.getName());
+				moduleHtml.append("</a></li>");
+			}
+			moduleHtml.append("</ul></li>");
+			request.setAttribute("extraHeader", moduleHtml.toString());
+			%>
 			<%@ include file="./includes/header.jspf" %>
 			<h1>Hello World!</h1>
 			<div class="row">
