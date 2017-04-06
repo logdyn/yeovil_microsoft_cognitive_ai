@@ -47,13 +47,14 @@ public class HomeServlet extends HttpServlet
 			modules = new ArrayList<>(modulesNames.length);
 			for (final String moduleName : modulesNames)
 			{
-				try
+				final Module module = Module.fromName(moduleName);
+				if (null != module)
 				{
-					modules.add(Module.valueOf(moduleName.toUpperCase()));
+					modules.add(module);
 				}
-				catch (IllegalArgumentException iae)
+				else
 				{
-					LoggingEndpoint.log(request.getSession().getId(), Level.WARNING, iae.getMessage());
+					LoggingEndpoint.log(request.getSession().getId(), Level.WARNING, "No module found with name: " + moduleName);
 				}
 			}
 		}

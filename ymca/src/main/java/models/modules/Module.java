@@ -69,6 +69,18 @@ public enum Module
 		this.externalPaths = Collections.unmodifiableSet(new LinkedHashSet<>(externalResources));
 	}
 	
+	public static Module fromName(final String name)
+	{
+		for (final Module module : Module.values())
+		{
+			if (module.getName().equals(name))
+			{
+				return module;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * @return the name of this module.
 	 */

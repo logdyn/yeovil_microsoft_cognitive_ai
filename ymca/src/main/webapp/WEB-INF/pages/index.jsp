@@ -72,9 +72,7 @@
 			moduleHtml.append("<span class='caret'></span></a><ul class='dropdown-menu'>");
 			for (final Module module : Module.values())
 			{
-				moduleHtml.append("<li><a class='addModuleBtn' href='");
-				moduleHtml.append("#");
-				moduleHtml.append("'>");
+				moduleHtml.append("<li><a class='addModuleBtn' href='#'>");
 				moduleHtml.append(module.getName());
 				moduleHtml.append("</a></li>");
 			}
