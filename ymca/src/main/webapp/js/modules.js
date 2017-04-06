@@ -17,8 +17,10 @@ var modules = {
 	close: function(event)
 	{
 		event = event || window.event;
-		var target = event.target.parentElement.parentElement.parentElement;
-		target.parentElement.removeChild(target);
+		event.target = event.target || event.srcElement;
+        var targetModule = event.target.parentElement.parentElement.parentElement;
+        targetModule.parentElement.removeChild(targetModule);
+        modules.addModules();
 	},
 	fullscreen: function(event)
 	{
@@ -36,6 +38,42 @@ var modules = {
 		{
 			console.warn("failed to make element fullscreen.", target);
 		}
-	}
+	},
+    addModules: function (moduleNames)
+    {
+        moduleNames = moduleNames || [];
+        var modules = Array.from(document.getElementsByClassName('module'));
+        var query = 'mods=';
+        modules.forEach(function(module, index)
+        {
+            var textNode = module.getElementsByClassName('panel-heading')[0].firstChild;
+            query += textNode.textContent.trim();
+            query += ',';
+        });
+        moduleNames.forEach(function(moduleName)
+        {
+            query += moduleName;
+            query += ',';
+        });
+        query = query.substr(0, query.length-1); // remove last comma
+        var modsRegex = /(mods=[\w,]*)&?/;
+        if (modsRegex.test(location.search))
+        {
+            location.search = location.search.replace(modsRegex, query);
+        }
+        else
+        {
+            if (location.search.length > 0)
+            {
+                query = '&' + query;
+                location.search = location.search + query;
+            }
+            else
+            {
+                query = '?' + query;
+                location.search = query;
+            }
+        } 
+    }
 }
 document.addEventListener('DOMContentLoaded', modules.init);

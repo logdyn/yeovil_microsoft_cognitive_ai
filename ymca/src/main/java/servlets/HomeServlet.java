@@ -1,16 +1,18 @@
 package servlets;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.logging.Level;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import endpoints.LoggingEndpoint;
 import models.modules.Module;
+import models.modules.ModuleUtils;
 
 /**
  * Servlet implementation class HomeServlet
@@ -33,13 +35,28 @@ public class HomeServlet extends HttpServlet
 	@Override
 	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException
 	{
-		final String strCount = request.getParameter("count");
-		int count = (strCount == null) ? 2 : Integer.parseInt(strCount);
-		if(count < 1) { count = 1;}
-		final List<Module> modules = Arrays.asList(new Module[count]);
-		Collections.fill(modules, Module.WEBCAM);
-		modules.set(0, Module.CONTROLS);
-		//modules.set(1, Module.CONTROLS);
+		final String modsParam = request.getParameter("mods");
+		final Collection<Module> modules;
+		if (null == modsParam)
+		{
+			modules = ModuleUtils.getDefaultModules();
+		}
+		else
+		{
+			final String[] modulesNames = modsParam.split(",");
+			modules = new ArrayList<>(modulesNames.length);
+			for (final String moduleName : modulesNames)
+			{
+				try
+				{
+					modules.add(Module.valueOf(moduleName.toUpperCase()));
+				}
+				catch (IllegalArgumentException iae)
+				{
+					LoggingEndpoint.log(request.getSession().getId(), Level.WARNING, iae.getMessage());
+				}
+			}
+		}
 		request.setAttribute("modules", modules);
 		request.getRequestDispatcher("/WEB-INF/pages/index.jsp").forward(request, response);
 	}

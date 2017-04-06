@@ -25,30 +25,24 @@ public class LoggingEndpoint extends Endpoint
 	private static Map<String, Set<LoggingEndpoint>> endpoints = new HashMap<>();
 	private Session session;
 	private String sessionId;
-	
-	//used to set values from within anonymous MessageHandler
-	private LoggingEndpoint instance = this;
 
 	@Override
-	public void onOpen(Session session, EndpointConfig config)
+	public void onOpen(final Session session, final EndpointConfig config)
 	{
 		this.session = session;
 		session.addMessageHandler(new MessageHandler.Whole<String>()
 		{
 			@Override
-			public void onMessage(String text)
+			public void onMessage(final String text)
 			{
-				sessionId = text;
-				if (null == LoggingEndpoint.endpoints.get(sessionId))
+				LoggingEndpoint.this.sessionId = text;
+				Set<LoggingEndpoint> set = LoggingEndpoint.endpoints.get(LoggingEndpoint.this.sessionId);
+				if (null == set)
 				{
-					Set<LoggingEndpoint> set = new HashSet<>();
-					set.add(instance);
-					LoggingEndpoint.endpoints.put(sessionId, set);
+					set = new HashSet<>();
+					LoggingEndpoint.endpoints.put(LoggingEndpoint.this.sessionId, set);
 				}
-				else
-				{
-					LoggingEndpoint.endpoints.get(sessionId).add(instance);
-				}
+				set.add(LoggingEndpoint.this);
 			}
 		});
 	}
@@ -64,7 +58,12 @@ public class LoggingEndpoint extends Endpoint
 	@Override
 	public void onClose(final Session session, final CloseReason closeReason)
 	{
-		LoggingEndpoint.endpoints.remove(this.sessionId);
+		final Set<LoggingEndpoint> set = LoggingEndpoint.endpoints.get(this.sessionId);
+		set.remove(this);
+		if (set.isEmpty())
+		{
+			LoggingEndpoint.endpoints.remove(this.sessionId);
+		}
 	}
 
 	/**
@@ -72,7 +71,7 @@ public class LoggingEndpoint extends Endpoint
 	 * @param level The log level e.g. INFO or SEVERE
 	 * @param message The message to display
 	 */
-	public static void log(Level level, String message)
+	public static void log(final Level level, final String message)
 	{
 		LoggingEndpoint.log(null, level, message);
 	}
@@ -83,7 +82,7 @@ public class LoggingEndpoint extends Endpoint
 	 * @param level The log level e.g. INFO or SEVERE
 	 * @param message The message to display
 	 */
-	public static void log(String sessionId, Level level, String message)
+	public static void log(final String sessionId, final Level level, final String message)
 	{
 		JSONObject jsonMessage = new JSONObject();
 		jsonMessage.put("level", level.getName());
@@ -102,9 +101,18 @@ public class LoggingEndpoint extends Endpoint
 		}
 		else
 		{
-			for (LoggingEndpoint endpoint : LoggingEndpoint.endpoints.get(sessionId))
+			final Set<LoggingEndpoint> sessionEndpoints = LoggingEndpoint.endpoints.get(sessionId);
+			if (null != sessionEndpoints)
 			{
-				endpoint.session.getAsyncRemote().sendText(jsonMessage.toString());
+				for (LoggingEndpoint endpoint : sessionEndpoints)
+				{
+					endpoint.session.getAsyncRemote().sendText(jsonMessage.toString());
+				}
+			}
+			else
+			{
+				System.err.println(String.format("no LoggingEndpoints regestered for session '%s'", sessionId));
+				System.err.println(level.getName() + ": " + message);
 			}
 		}
 	}
