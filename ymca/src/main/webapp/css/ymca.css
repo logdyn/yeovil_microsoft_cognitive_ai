@@ -15,6 +15,7 @@ body {
 .panel-body {
 	height: 89%;
 	height: calc(100% - 1.65em);
+	min-height: 6em;
 	padding: 0px;
 	background-color: black;
 	color: white;
