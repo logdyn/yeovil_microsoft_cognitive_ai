@@ -13,6 +13,7 @@ public final class ModuleUtils
 	{
 		ModuleUtils.DEFAULT_MODULES.add(Module.WEBCAM);
 		ModuleUtils.DEFAULT_MODULES.add(Module.CONTROLS);
+		ModuleUtils.DEFAULT_MODULES.add(Module.OUTPUT_LOG);
 	}
 	
 	public static final Collection<Module> getDefaultModules()

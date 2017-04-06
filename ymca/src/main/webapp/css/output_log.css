@@ -1,0 +1,12 @@
+.logElement
+{
+	position: absolute;
+	bottom: 0;
+	width: 98%;
+	width: calc(100% - 32px);
+	max-height: 92%;
+	max-height: calc(100% - 33px);
+	background-color: black;
+	border: 0;
+	overflow: auto;
+}

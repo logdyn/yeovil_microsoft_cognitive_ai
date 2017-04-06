@@ -9,9 +9,9 @@ import java.util.Set;
 public enum Module
 {
 	TEST("Test", "/WEB-INF/modules/test.html"),
-	WEBCAM("Webcam", "/WEB-INF/modules/webcam.html", "js/LoggingEndpoint.js", "js/webcam.js", "js/xhttp.js", "js/exampleListenerEndpoint.js", "css/webcam.css"),
+	WEBCAM("Webcam", "/WEB-INF/modules/webcam.html", "js/webcam.js", "js/xhttp.js", "css/webcam.css"),
 	CONTROLS("Controls", "/WEB-INF/modules/controls.jsp", "js/controls.js"),
-	OUTPUT_LOG("Log", "/WEB-INF/modules/output_log.html", "js/outputLog.js");
+	OUTPUT_LOG("Output Log", "/WEB-INF/modules/output_log.html", "js/outputLog.js", "css/output_log.css");
 	
 	private final String name;
 	private final String contentPath;

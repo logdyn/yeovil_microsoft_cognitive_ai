@@ -14,10 +14,19 @@ var loggingEndpoint = {
 			
 			websocket.onmessage = function(message) 
 			{
-				var jsonMessage = JSON.parse(message.data);
-				outputLog.append(jsonMessage);
-				console.log(jsonMessage['level'] + ": " + jsonMessage['message']);
+				var jsonMessage = JSON.parse(message.data);				
+				loggingEndpoint.log(jsonMessage.level, jsonMessage.message);
 			};
+		},
+		
+		log(level, message)
+		{
+			if(typeof outputLog === "object")
+			{
+				outputLog.append(level, message);
+			}
+			
+			console.log(level + ": " + message);
 		},
 		
 		closeConnect : function()
