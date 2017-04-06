@@ -15,6 +15,7 @@ var loggingEndpoint = {
 			websocket.onmessage = function(message) 
 			{
 				var jsonMessage = JSON.parse(message.data);
+				outputLog.append(jsonMessage);
 				console.log(jsonMessage['level'] + ": " + jsonMessage['message']);
 			};
 		},

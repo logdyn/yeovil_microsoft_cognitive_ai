@@ -10,7 +10,8 @@ public enum Module
 {
 	TEST("Test", "/WEB-INF/modules/test.html"),
 	WEBCAM("Webcam", "/WEB-INF/modules/webcam.html", "js/LoggingEndpoint.js", "js/webcam.js", "js/xhttp.js", "js/exampleListenerEndpoint.js", "css/webcam.css"),
-	CONTROLS("Controls", "/WEB-INF/modules/controls.jsp", "js/controls.js");
+	CONTROLS("Controls", "/WEB-INF/modules/controls.jsp", "js/controls.js"),
+	OUTPUT_LOG("Log", "/WEB-INF/modules/output_log.html", "js/outputLog.js");
 	
 	private final String name;
 	private final String contentPath;

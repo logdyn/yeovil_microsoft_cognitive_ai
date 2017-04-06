@@ -21,6 +21,7 @@ public class ExampleListenerEndpoint extends Endpoint implements Observer
 	@Override
 	public void onOpen(final Session session, final EndpointConfig ec)
 	{
+		this.session = session;
 		session.addMessageHandler(new MessageHandler.Whole<String>()
 		{
 			@Override
