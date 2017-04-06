@@ -1,7 +1,10 @@
 @CHARSET "UTF-8";
 
-body {
-	overflow: hidden;
+@media (min-width:768px)
+{
+	body {
+		overflow: hidden;
+	}
 }
 
 .nav {
