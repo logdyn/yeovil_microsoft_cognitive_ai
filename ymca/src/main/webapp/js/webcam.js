@@ -33,7 +33,7 @@ var webcam = {
 		{
 			v.src = "resources/video_error.mp4";
 		})
-		console.error("Error loading Webcam");
+		loggingEndpoint.log('WARNING', 'Error loading Webcam');
 	},
 
 	setId : function(uuid) {

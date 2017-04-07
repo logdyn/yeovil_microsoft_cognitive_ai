@@ -27,6 +27,10 @@
 			<link rel="stylesheet" type="text/css" href="<%=cssPath%>" />
 			<%
 		}
+		%>
+		<script src="js/LoggingEndpoint.js"></script>
+		<script src="js/modules.js"></script>
+		<%
 		for (final String jsPath : ModuleUtils.getJavascriptLinks(modules))
 		{
 			%>
@@ -34,32 +38,15 @@
 			<%
 		}
 		%>
-		<script src="js/modules.js"></script>
 		<script> var sessionId = "<%= session.getId()%>";</script>
 		<style>
 			@media (min-width:768px)
 			{
 				.module
 				{
-					height: <%=1100 / rows == 0 ? 1 : rows %>px;
-					height: calc((100vh - 10em) / <%= rows == 0 ? 1 : rows %>);
+					height: <%=870 / (rows == 0 ? 1 : rows) %>px;
+					height: calc((100vh - 5em) / <%= rows == 0 ? 1 : rows %>);
 				}
-			}
-			.module .panel
-			{
-				height:95%;
-				height: calc(100% - 15px);
-			}
-			.module .panel-heading
-			{
-				padding-top: 1px;
-				padding-bottom: 1px;
-			}
-			.close span.glyphicon
-			{
-				top: 0.55em;
-				right: 0.5em;
-				font-size: 0.5em;
 			}
 		</style>
 	</head>
@@ -80,7 +67,6 @@
 			request.setAttribute("extraHeader", moduleHtml.toString());
 			%>
 			<%@ include file="./includes/header.jspf" %>
-			<h1>Hello World!</h1>
 			<div class="row">
 			<%
 			int c = 0; // current column index

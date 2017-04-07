@@ -84,16 +84,16 @@ public class LoggingEndpoint extends Endpoint
 	 */
 	public static void log(final String sessionId, final Level level, final String message)
 	{
-		JSONObject jsonMessage = new JSONObject();
+		final JSONObject jsonMessage = new JSONObject();
 		jsonMessage.put("level", level.getName());
 		jsonMessage.put("message", message);
 
 		// If sessionID is not specified, notify all endpoints
 		if (null == sessionId)
 		{
-			for (Set<LoggingEndpoint> set : LoggingEndpoint.endpoints.values())
+			for (final Set<LoggingEndpoint> set : LoggingEndpoint.endpoints.values())
 			{
-				for (LoggingEndpoint endpoint : set)
+				for (final LoggingEndpoint endpoint : set)
 				{
 					endpoint.session.getAsyncRemote().sendText(jsonMessage.toString());
 				}
@@ -104,7 +104,7 @@ public class LoggingEndpoint extends Endpoint
 			final Set<LoggingEndpoint> sessionEndpoints = LoggingEndpoint.endpoints.get(sessionId);
 			if (null != sessionEndpoints)
 			{
-				for (LoggingEndpoint endpoint : sessionEndpoints)
+				for (final LoggingEndpoint endpoint : sessionEndpoints)
 				{
 					endpoint.session.getAsyncRemote().sendText(jsonMessage.toString());
 				}

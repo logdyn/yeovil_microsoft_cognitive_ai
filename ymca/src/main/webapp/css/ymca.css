@@ -1,28 +1,48 @@
 @CHARSET "UTF-8";
-body
+
+@media (min-width:768px)
 {
-    overflow: hidden;
+	body {
+		overflow: hidden;
+	}
 }
-.nav
-{
+
+.nav {
 	margin: auto;
 }
-.glyphicon
-{
+
+.glyphicon {
 	width: 1.28571429em;
 }
-.panel-body
-{
-	height:89%;
+
+.panel-body {
+	height: 89%;
 	height: calc(100% - 1.65em);
+	min-height: 6em;
 	padding: 0px;
 	background-color: black;
 	color: white;
 	border-bottom-right-radius: 2px;
 	border-bottom-left-radius: 2px;
 }
-:-webkit-full-screen
-{
-  width: 100%;
-  height: 100%;
+
+:-webkit-full-screen {
+	width: 100%;
+	height: 100%;
+}
+
+.module .panel {
+	height: 95%;
+	height: calc(100% - 15px);
+}
+
+.module .panel-heading {
+	padding-top: 1px;
+	padding-bottom: 1px;
+}
+
+.close span.glyphicon {
+	top: 0.55em;
+	right: 0.5em;
+	font-size: 0.5em;
 }

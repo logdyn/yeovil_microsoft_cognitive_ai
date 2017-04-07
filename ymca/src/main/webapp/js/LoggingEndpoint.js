@@ -14,9 +14,38 @@ var loggingEndpoint = {
 			
 			websocket.onmessage = function(message) 
 			{
-				var jsonMessage = JSON.parse(message.data);
-				console.log(jsonMessage['level'] + ": " + jsonMessage['message']);
+				var jsonMessage = JSON.parse(message.data);				
+				loggingEndpoint.log(jsonMessage.level, jsonMessage.message);
 			};
+		},
+		
+		log : function(level, message)
+		{
+			level = level.toUpperCase();
+			var func;
+			if(typeof outputLog === "object")
+			{
+				outputLog.append(level, message);
+			}
+			
+			switch (level) 
+			{
+				case 'INFO':
+					func = console.info;
+					break;
+				case 'WARN':
+				case 'WARNING':
+					func = console.warn;
+					break;
+				case 'ERROR':
+				case 'SEVERE':
+					func = console.error;
+					break;
+				default:
+					func = console.log;
+			}
+			
+			func(level + " : " + message);
 		},
 		
 		closeConnect : function()
@@ -24,7 +53,7 @@ var loggingEndpoint = {
 			websocket.close();
 		},
 		
-		sendId(id)
+		sendId : function(id)
 		{
 			websocket.send(id);
 		}
