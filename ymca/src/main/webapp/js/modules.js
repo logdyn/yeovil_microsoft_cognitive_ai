@@ -3,6 +3,7 @@ var modules = {
 	{
 		var closeBtns = Array.from(document.getElementsByClassName('closeBtn'));
 		var fullscreenBtns = Array.from(document.getElementsByClassName('fullscreenBtn'));
+		var addModuleBtns = Array.from(document.getElementsByClassName('addModuleBtn'));
 		
 		closeBtns.forEach(function(closeBtn)
 		{
@@ -13,6 +14,13 @@ var modules = {
 		{
 			fullscreenBtn.addEventListener('click', modules.fullscreen);
 		});
+        addModuleBtns.forEach(function (addModuleBtn)
+        {
+            addModuleBtn.addEventListener('click', function (event)
+            {
+                modules.addModules([addModuleBtn.textContent.trim()]);
+            });
+        });
 	},
 	close: function(event)
 	{
@@ -52,11 +60,11 @@ var modules = {
         });
         moduleNames.forEach(function(moduleName)
         {
-            query += moduleName;
+            query += encodeURIComponent(moduleName);
             query += ',';
         });
         query = query.substr(0, query.length-1); // remove last comma
-        var modsRegex = /(mods=[\w,]*)&?/;
+        var modsRegex = /(mods=[\w, %\d]*)&?/;
         if (modsRegex.test(location.search))
         {
             location.search = location.search.replace(modsRegex, query);
