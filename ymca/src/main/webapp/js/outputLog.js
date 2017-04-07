@@ -30,7 +30,7 @@ var outputLog =
 					break;
 				case 'INFO':
 					levelClass = "text-info";
-					iconHTML += " glyphicon-info-sign"
+					iconHTML += " glyphicon-info-sign";
 					break;
 				case 'WARN':
 				case 'WARNING':
