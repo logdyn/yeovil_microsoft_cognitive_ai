@@ -60,11 +60,11 @@ var modules = {
         });
         moduleNames.forEach(function(moduleName)
         {
-            query += moduleName;
+            query += encodeURIComponent(moduleName);
             query += ',';
         });
         query = query.substr(0, query.length-1); // remove last comma
-        var modsRegex = /(mods=[\w,]*)&?/;
+        var modsRegex = /(mods=[\w, %\d]*)&?/;
         if (modsRegex.test(location.search))
         {
             location.search = location.search.replace(modsRegex, query);
