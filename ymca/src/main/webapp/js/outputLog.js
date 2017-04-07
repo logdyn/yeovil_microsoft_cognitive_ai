@@ -21,25 +21,33 @@ var outputLog =
 		logElements.forEach(function(log) 
 		{
 			var levelClass;
-			var iconHTML = '<span class="';
+			var iconHTML = '<span class="glyphicon';
+			
 			switch (level) 
 			{
 				case 'FINE':
-					levelClass = "text-success"
-					break;;
-				case 'WARNING':
-					iconHTML += "glyphicon glyphicon-warning-sign"
-					levelClass = "text-" + level.toLowerCase();
+					levelClass = "text-success";
 					break;
+				case 'INFO':
+					levelClass = "text-info";
+					iconHTML += " glyphicon-info-sign"
+					break;
+				case 'WARN':
+				case 'WARNING':
+					iconHTML += " glyphicon-alert";
+					levelClass = "text-warning";
+					break;
+				case 'ERROR':
 				case 'SEVERE':
-					iconHTML += "glyphicon glyphicon-warning-sign"
-					levelClass = "text-danger"
+					iconHTML += " glyphicon-remove-sign";
+					levelClass = "text-danger";
 					break;
 				default:
 					levelClass = "text-" + level.toLowerCase();
 			}
+			
 			iconHTML += '"></span>';
-			var messageHTML = '<samp class="' + levelClass + '">' + iconHTML + level.toUpperCase() + " : " +  message + '</samp><br/>';
+			var messageHTML = '<samp class="' + levelClass + '">' + iconHTML + level + " : " +  message + '</samp><br/>';
 			log.innerHTML += messageHTML;
 			
 			if (!outputLog.isHover)
