@@ -4,7 +4,7 @@ var loggingEndpoint = {
 		
 		init : function()
 		{
-			var origin = window.location.origin.replace("http://", "ws://");
+			var origin = window.location.origin.replace(/https?:\/\//, "ws://");
 			websocket = new WebSocket(origin + "/ymca/LoggingEndpoint");
 			websocket.onopen = function() 
 			{
