@@ -4,7 +4,7 @@ var exampleEndpoint = {
 		
 	init : function()
 	{
-		var origin = window.location.origin.replace(/https?:\/\//, "ws://");
+		var origin = window.location.origin.replace("http://", "ws://").replace("https://","wss://");
 		webSocket = new WebSocket(origin + "/ymca/ExampleListenerEndpoint");
 		webSocket.onopen = function() 
 		{
