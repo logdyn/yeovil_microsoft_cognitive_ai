@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.websocket.CloseReason;
 import javax.websocket.Endpoint;
 import javax.websocket.EndpointConfig;
@@ -73,7 +75,28 @@ public class LoggingEndpoint extends Endpoint
 	 */
 	public static void log(final Level level, final String message)
 	{
-		LoggingEndpoint.log(null, level, message);
+		LoggingEndpoint.log((String) null, level, message);
+	}
+	
+	/**
+	 * Logs to all JavaScript Logging Endpoints for a specific session
+	 * @param request The request to get the session to send the message to
+	 * @param level The log level e.g. INFO or SEVERE
+	 * @param message The message to display
+	 */
+	public static void log (final HttpServletRequest request, final Level level, final String message)
+	{
+		final HttpSession session = request.getSession(false);
+		final String sessionId;
+		if (null != session)
+		{
+			sessionId = session.getId();
+		}
+		else
+		{
+			sessionId = null;
+		}
+		LoggingEndpoint.log(sessionId, level, message);
 	}
 
 	/**
