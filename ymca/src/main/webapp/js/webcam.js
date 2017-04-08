@@ -72,7 +72,7 @@ var webcam = {
 		xhttp.sendRequest('webcamImage=' + dataURL, function(responseText)
         {
             webcam.processResponse(responseText);
-            callback();
+            if (typeof callback !== 'undefined') { callback(); }
         },
         "WebcamServlet");
 	},

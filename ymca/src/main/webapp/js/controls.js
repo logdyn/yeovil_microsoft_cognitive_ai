@@ -13,7 +13,7 @@ var controls = {
 		});
 		capImageBtns.forEach(function (capImageBtn)
         {
-			capImageBtn.addEventListener('click', controls.captureImage);
+			capImageBtn.addEventListener('click', controls.captureSingleImage);
 		});
         intervalCapBtns.forEach(function (intervalCapBtn)
         {
@@ -39,7 +39,7 @@ var controls = {
 			console.warn("failed to make element fullscreen.", videoElement);
 		}
 	},
-	captureImage: function (event)
+	captureSingleImage: function (event)
     {
         "use strict";
 		event = event || window.event;
