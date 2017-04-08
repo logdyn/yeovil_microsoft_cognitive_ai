@@ -90,7 +90,7 @@ public class WebcamServlet extends HttpServlet implements ObservableServerClass
 			final String imageResponse = new VisionServiceRequest(imagedata, VisionServiceRequest.toGet.DESCRIPTION)
 					.call();
 
-			//LoggingEndpoint.log(id, Level.INFO, imageResponse);
+			LoggingEndpoint.log(request, Level.FINE, "Recieved response from Vision Service");
 
 			 response.setContentLength(imageResponse.length());
 			 response.setContentType("application/json");

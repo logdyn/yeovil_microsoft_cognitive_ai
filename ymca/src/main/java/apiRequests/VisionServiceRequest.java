@@ -32,7 +32,7 @@ public class VisionServiceRequest implements Callable<String>
 	/** The image to process. */
 	private final BufferedImage image;
 	/** The image to process as byte array.*/
-	private byte[] bytes;
+	private final byte[] bytes;
 	/** Type of info to get. */
 	private final toGet toGet;
 	/**
@@ -134,7 +134,7 @@ public class VisionServiceRequest implements Callable<String>
 		final HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 		connection.setRequestMethod("POST");
 		connection.setRequestProperty("Content-Type", "application/octet-stream");
-		connection.setRequestProperty("Content-Length", String.valueOf(0));
+		connection.setRequestProperty("Content-Length", Integer.toString(image.length));
 		connection.setDoOutput(true);
 		//Send request
 	    connection.getOutputStream().write(image);

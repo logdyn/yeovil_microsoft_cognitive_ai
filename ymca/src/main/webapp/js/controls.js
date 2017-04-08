@@ -36,7 +36,7 @@ var controls = {
         else
 		{
 			event.target.className = event.target.className + " disabled";
-			console.warn("failed to make element fullscreen.", videoElement);
+			loggingEndpoint.log("WARNING", "Fullscreen not avalible");
 		}
 	},
 	captureImage: function (event)

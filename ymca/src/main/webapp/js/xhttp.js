@@ -7,29 +7,34 @@ var xhttp =
 		method = method || 'POST'
 		address = address || '';
 		var xhttp;
-		if (window.XMLHttpRequest) {
+		if (window.XMLHttpRequest)
+        {
 			xhttp = new XMLHttpRequest();
-		} else {
+		}
+        else
+        {
 			xhttp = new ActiveXObject('Microsoft.XMLHTTP');
 		}
 		xhttp.open(method, address, true);
 		xhttp.setRequestHeader('Content-Type',
 				'application/x-www-form-urlencoded');
-		xhttp.onreadystatechange = function() {
-			if (this.readyState == 4 && this.status == 200) {
-				if (typeof responseFuction === 'function') {
-					responseFuction(this.responseText);
-				}
+		xhttp.onreadystatechange = function()
+        {
+            if (this.readyState == 4)
+            {
+				if (this.status == 200)
+                {
+                    if (typeof responseFuction === 'function')
+                    {
+                        responseFuction(this.responseText);
+                    }
+                }
+                else
+                {
+                    loggingEndpoint.log('WARNING', address + ' responded with: ' + this.responseText);
+                }
 			}
 		}
-
-		if (data) 
-		{
-			xhttp.send(data);
-		} else 
-		{
-			xhttp.send();
-		}
-
+        xhttp.send(data);
 	}
 }
