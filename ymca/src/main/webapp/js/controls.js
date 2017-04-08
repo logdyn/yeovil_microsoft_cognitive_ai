@@ -1,5 +1,5 @@
 var controls = {
-    interval: null,
+    capturing: false,
 	init: function ()
     {
         "use strict";
@@ -57,18 +57,25 @@ var controls = {
         "use strict";
         event = event || window.event;
         var target = event.target || event.srcElement;
-        var active = target.innerHTML.includes("Stop");
-        if (active)
+        controls.capturing = target.innerHTML.includes("Start");
+        if (controls.capturing)
         {
-            target.innerHTML = target.innerHTML.replace("Stop","Start");
-            target.className = target.className.replace("btn-danger", "btn-success");
-            clearInterval(this.interval);
+            controls.captureImage();
+            target.innerHTML = target.innerHTML.replace("Start","Stop");
+            target.className = target.className.replace("btn-success", "btn-danger");
         }
         else
         {
-            target.innerHTML = target.innerHTML.replace("Start","Stop");
-            target.className = target.className.replace("btn-success", "btn-danger");
-            this.interval = setInterval(webcam.captureImage, 5000);
+            target.innerHTML = target.innerHTML.replace("Stop","Start");
+            target.className = target.className.replace("btn-danger", "btn-success");
+        }
+    },
+    captureImage: function()
+    {
+        "use strict";
+        if (controls.capturing)
+        {
+            webcam.captureImage(controls.captureImage);
         }
     }
 }

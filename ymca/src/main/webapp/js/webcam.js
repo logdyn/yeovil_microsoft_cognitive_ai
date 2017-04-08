@@ -56,7 +56,7 @@ var webcam = {
 	},
 
 	// FOR THE LOVE OF GOD DON'T TOUCH IT, IT WORKS
-	captureImage : function() {
+	captureImage : function(callback) {
 		var canvas = document.createElement("canvas");
 		var video = videoElements[0];
 		canvas.height = video.videoHeight;
@@ -69,8 +69,12 @@ var webcam = {
 		// escape url, inc. manual stuff because escape() misses things
 		dataURL = encodeURIComponent(dataURL);
 		// Send to servlet
-		xhttp.sendRequest('webcamImage=' + dataURL, webcam.processResponse,
-				"WebcamServlet");
+		xhttp.sendRequest('webcamImage=' + dataURL, function(responseText)
+        {
+            webcam.processResponse(responseText);
+            callback();
+        },
+        "WebcamServlet");
 	},
 
 	processResponse : function (responseText)
