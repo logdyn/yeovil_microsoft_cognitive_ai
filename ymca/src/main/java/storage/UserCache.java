@@ -152,23 +152,19 @@ public class UserCache
 	public void putUser(final User user) throws SQLException
 	{
 		final AsyncQueryRunner run = this.database.getAsyncQueryRunner();
-		try
+		run.update(
+		        "INSERT INTO users (user_id, user_name, user_pass, forename, surname, address_id) VALUES (?,?,?,?,?,?)"
+		                + "ON CONFLICT (user_id) DO UPDATE SET user_name = EXCLUDED.user_name, user_pass=EXCLUDED.user_pass, forename=EXCLUDED.forename, surname=EXCLUDED.surname, address_id=EXCLUDED.address_id;",
+		        user.getUuid(), user.getUsername(), user.getDigest().toString(), user.getForename(), user.getSurname(),
+		        user.getAddress().getId());
+		run.update("DELETE FROM user_roles WHERE user_name=?;", user.getUsername());
+		for (final String rolename : user.getRole().toDatabaseValues())
 		{
-			run.update("INSERT INTO users (user_id, user_name, user_pass, forename, surname, address_id) VALUES (?,?,?,?,?,?)"
-					+ "ON CONFLICT (user_id) DO UPDATE SET user_name = EXCLUDED.user_name, user_pass=EXCLUDED.user_pass, forename=EXCLUDED.forename, surname=EXCLUDED.surname, address_id=EXCLUDED.address_id;",
-							user.getUuid(), user.getUsername(), user.getDigest(), user.getForename(), user.getSurname(), user.getAddress().getId());
-			run.update("DELETE FROM user_roles WHERE user_name=?;",user.getUsername());
-			for (final String rolename : user.getRole().toDatabaseValues())
-			{
-				run.update("INSERT INTO user_roles (user_name, role_name) VALUES (?,?) ON CONFLICT (user_name, role_name) DO NOTHING", user.getUsername(), rolename);
-			}
-			this.users.put(user.getUuid(), user);
+			run.update(
+			        "INSERT INTO user_roles (user_name, role_name) VALUES (?,?) ON CONFLICT (user_name, role_name) DO NOTHING",
+			        user.getUsername(), rolename);
 		}
-		catch (SQLException e)
-		{
-			UserCache.LOGGER.log(Level.WARNING, e.getMessage(), e);
-			throw e;
-		}
+		this.users.put(user.getUuid(), user);
 	}
 	
 	/**
@@ -179,7 +175,7 @@ public class UserCache
 	 */
 	public boolean isUsernameTaken(final String username)
 	{
-		return this.getUser(username) == null;
+		return this.getUser(username) != null;
 	}
 	
 	/**

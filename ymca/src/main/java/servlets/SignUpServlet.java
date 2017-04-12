@@ -3,6 +3,7 @@ package servlets;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.logging.Level;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
+import endpoints.LoggingEndpoint;
 import models.user.User;
 import storage.UserCache;
 
@@ -60,14 +62,29 @@ public class SignUpServlet extends HttpServlet
 		final JSONObject response = new JSONObject();
 		try
 		{
-			final User newUser = new User.Builder(jsonUser.getString("forename"), jsonUser.getString("surname")).fromJSON(jsonUser).build();
-			UserCache.getInstance().putUser(newUser);
-			response.put("userid", newUser.getUuid());
+			if (!UserCache.getInstance().isUsernameTaken(jsonUser.getString("username")))
+			{
+				final User newUser = new User.Builder(jsonUser.getString("forename"), jsonUser.getString("surname"))
+				        .fromJSON(jsonUser).build();
+				UserCache.getInstance().putUser(newUser);
+				response.put("userid", newUser.getUuid());
+				LoggingEndpoint.log(req.getRequestedSessionId(), Level.FINE, "Successfully added user '"
+				        + jsonUser.getString("username") + "' to the database.");
+			}
+			else
+			{
+				response.put("error", "The username '" + jsonUser.getString("username")
+				        + "' is already taken, please try another one.");
+				LoggingEndpoint.log(req.getRequestedSessionId(), Level.WARNING, "The username '"
+				        + jsonUser.getString("username") + "' is already taken, please try another one.");
+			}
+
 		}
 		catch (NoSuchAlgorithmException | SQLException e)
 		{
 			e.printStackTrace();
-			response.put("error", "an error happend");
+			response.put("error", "An error happend, please contact your administrator: " + e.getMessage());
+			LoggingEndpoint.log(req.getRequestedSessionId(), Level.SEVERE, e.getMessage());
 		}
 		resp.getWriter().write(response.toString());
 	}

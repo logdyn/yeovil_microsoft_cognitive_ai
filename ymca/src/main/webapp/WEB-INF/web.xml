@@ -24,6 +24,9 @@
   	<filter-name>LoggingFilter</filter-name>
   	<url-pattern>/*</url-pattern>
   </filter-mapping>
+  <listener>
+  	<listener-class>listeners.DatabaseListener</listener-class>
+  </listener>
   <servlet>
   	<servlet-name>AccountServlet</servlet-name>
   	<display-name>AccountServlet</display-name>
