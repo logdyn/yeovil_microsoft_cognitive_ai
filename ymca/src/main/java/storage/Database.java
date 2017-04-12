@@ -41,12 +41,17 @@ public class Database
 			{
 				Database.INSTANCE = new Database();
 			}
-			catch (NamingException e)
+			catch (final NamingException e)
 			{
 				Database.LOGGER.log(Level.WARNING, e.getMessage(), e);
 			}
 		}
 		return Database.INSTANCE;
+	}
+	
+	public void destroy()
+	{
+		this.executor.shutdown();
 	}
 	
 	/**
@@ -57,7 +62,7 @@ public class Database
 	private Database() throws NamingException
 	{
 		super();
-		Context init = new InitialContext();
+		final Context init = new InitialContext();
 		this.dataSource = (DataSource) init.lookup("java:/comp/env/jdbc/YMCA");
 	}
 	
