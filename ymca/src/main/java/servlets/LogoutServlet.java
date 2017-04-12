@@ -29,7 +29,7 @@ public class LogoutServlet extends HttpServlet
 	@Override
 	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException
 	{
-		request.getSession().invalidate();
+		request.logout();
 		response.sendRedirect(response.encodeRedirectURL(request.getContextPath() + "/"));
 	}
 }
