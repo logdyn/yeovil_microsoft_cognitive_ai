@@ -83,7 +83,7 @@
 					}
 				}
 				%>
-				<div class="module col-sm-<%= 12 / (rows - r <= stretchedRows ? (columns - 1) : columns) %>">
+				<div class="module module-<%=module.getName()%> col-sm-<%= 12 / (rows - r <= stretchedRows ? (columns - 1) : columns) %>">
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<%=module.getName()%>

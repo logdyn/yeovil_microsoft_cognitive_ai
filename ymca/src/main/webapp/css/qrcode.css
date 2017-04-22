@@ -1,0 +1,10 @@
+@CHARSET "UTF-8";
+.qrcode
+{
+	max-height: 100%;
+	max-width: 100%;
+}
+.module-QR-Code .panel-body
+{
+	background-color: white;	
+}
