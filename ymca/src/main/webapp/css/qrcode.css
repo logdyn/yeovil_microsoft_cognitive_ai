@@ -2,6 +2,7 @@
 .qrcode
 {
 	max-height: 100%;
+	height: 100vmin;
 	max-width: 100%;
 	/*filter: brightness(5000%) contrast(1%);*/
 	display: block;
