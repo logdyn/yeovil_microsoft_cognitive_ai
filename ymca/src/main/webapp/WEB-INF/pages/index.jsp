@@ -50,7 +50,7 @@
 			}
 		</style>
 	</head>
-	<body>
+	<body class="no-scroll">
 		<div class="container-fluid">
 			<%
 			final StringBuilder moduleHtml = new StringBuilder();

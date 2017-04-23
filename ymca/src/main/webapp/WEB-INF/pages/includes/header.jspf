@@ -36,6 +36,7 @@
 					<ul class="nav navbar-nav">
 						<%=addNavItem(request, "Home", "/") %>
 						<%=Objects.toString(request.getAttribute("extraHeader"), "") %>
+						<%=addNavItem(request, "About", "/About") %>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
 						<%					
