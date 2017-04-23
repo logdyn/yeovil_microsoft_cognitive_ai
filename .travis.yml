@@ -4,4 +4,9 @@ jdk:
 script: mvn test -f ymca/pom.xml
 notifications:
   email: false
-  slack: ucyproject:6LVWLgvgtBsXdlJnzqeRTbj9
+  slack:
+    rooms:
+      - ucyproject:6LVWLgvgtBsXdlJnzqeRTbj9#general
+    on_success: change
+    on_failure: always
+    
