@@ -44,7 +44,7 @@ var modules = {
 		}
 		else
 		{
-			console.warn("failed to make element fullscreen.", target);
+			loggingEndpoint.log("WARNING", "failed to make module fullscreen.");
 		}
 	},
     addModules: function (moduleNames)
@@ -55,7 +55,7 @@ var modules = {
         modules.forEach(function(module, index)
         {
             var textNode = module.getElementsByClassName('panel-heading')[0].firstChild;
-            query += textNode.textContent.trim();
+            query += encodeURIComponent(textNode.textContent.trim());
             query += ',';
         });
         moduleNames.forEach(function(moduleName)

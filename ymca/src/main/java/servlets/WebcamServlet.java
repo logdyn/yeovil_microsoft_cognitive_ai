@@ -84,13 +84,13 @@ public class WebcamServlet extends HttpServlet implements ObservableServerClass
 			// send image to listeners
 			this.notifyObservers(imagedata);
 
-			LoggingEndpoint.log(request.getSession().getId(), Level.FINE, "Sending image to Vision Service");
+			LoggingEndpoint.log(request, Level.FINE, "Sending image to Vision Service");
 
 			// Vision Request
 			final String imageResponse = new VisionServiceRequest(imagedata, VisionServiceRequest.toGet.DESCRIPTION)
 					.call();
 
-			//LoggingEndpoint.log(id, Level.INFO, imageResponse);
+			LoggingEndpoint.log(request, Level.FINE, "Recieved response from Vision Service");
 
 			 response.setContentLength(imageResponse.length());
 			 response.setContentType("application/json");
@@ -103,7 +103,7 @@ public class WebcamServlet extends HttpServlet implements ObservableServerClass
 			 response.setContentType("application/json");
 			 response.getWriter().print(errorText);
 
-			LoggingEndpoint.log(id, Level.SEVERE,
+			LoggingEndpoint.log(request, Level.SEVERE,
 					"One or more parameters missing from the Vision Service Request, contact an Administrator");
 		}
 	}

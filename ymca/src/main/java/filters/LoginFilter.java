@@ -27,7 +27,7 @@ public class LoginFilter extends FilterBase
 	@Override
 	public void init(final FilterConfig fConfig) throws ServletException
 	{
-		// TODO Auto-generated method stub
+		// NOOP
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class LoginFilter extends FilterBase
 	@Override
 	public void destroy()
 	{
-		// TODO Auto-generated method stub
+		// NOOP
 	}
 
 	@Override

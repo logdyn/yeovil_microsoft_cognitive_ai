@@ -10,6 +10,7 @@ var loggingEndpoint = {
 			{
 				//Sets up the logger instance with the correct session ID
 				loggingEndpoint.sendId(sessionId);
+                loggingEndpoint.log('FINE', 'Connection to server log opened');
 			};
 			
 			websocket.onmessage = function(message) 
@@ -59,4 +60,8 @@ var loggingEndpoint = {
 		}
 }
 
+window.addEventListener('error', function(msg)
+{
+    loggingEndpoint.log('ERROR', msg.message || msg);
+});
 document.addEventListener('DOMContentLoaded', loggingEndpoint.init, false);
