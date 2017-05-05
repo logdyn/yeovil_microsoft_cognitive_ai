@@ -1,7 +1,9 @@
 package endpoints;
 
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -24,6 +26,7 @@ public class LoggingEndpoint extends Endpoint
 {
 
 	private static Map<String, Set<LoggingEndpoint>> endpoints = new HashMap<>();
+	private static Map<String, Deque<JSONObject>> messages = new HashMap<>();
 	private Session session;
 	private String sessionId;
 
@@ -110,6 +113,20 @@ public class LoggingEndpoint extends Endpoint
 					endpoint.session.getAsyncRemote().sendText(jsonMessage.toString());
 				}
 			}
+			
+			//Queue message for all sessions
+			for (String tempSessionId : LoggingEndpoint.endpoints.keySet())
+			{
+				Deque<JSONObject> messageQueue = LoggingEndpoint.messages.get(tempSessionId);
+				
+				if (null == messageQueue)
+				{
+					messageQueue = new LinkedList<>();
+				}
+
+				messageQueue.add(jsonMessage);
+				LoggingEndpoint.messages.put(tempSessionId, messageQueue);
+			}
 		}
 		else
 		{
@@ -120,6 +137,17 @@ public class LoggingEndpoint extends Endpoint
 				{
 					endpoint.session.getAsyncRemote().sendText(jsonMessage.toString());
 				}
+				
+				//Add message to queue for the sessionId
+				Deque<JSONObject> messageQueue = LoggingEndpoint.messages.get(sessionId);
+				
+				if (null == messageQueue)
+				{
+					messageQueue = new LinkedList<>();
+				}
+
+				messageQueue.add(jsonMessage);
+				LoggingEndpoint.messages.put(sessionId, messageQueue);
 			}
 			else
 			{
@@ -127,5 +155,20 @@ public class LoggingEndpoint extends Endpoint
 				System.err.println(level.getName() + ": " + message);
 			}
 		}
+	}
+	
+	/**
+	 * Returns the queue of existing messages for a given session
+	 * @param sessionId The session ID for the session messages to be retrieved
+	 * @return The queue of messages
+	 */
+	public static Deque<JSONObject> getMessages(String sessionId)
+	{
+		return LoggingEndpoint.messages.get(sessionId);
+	}
+
+	public static void log(HttpServletRequest request, JSONObject message)
+	{
+		LoggingEndpoint.log(request, Level.parse((String) message.getString("level")), (String) message.get("message"));
 	}
 }

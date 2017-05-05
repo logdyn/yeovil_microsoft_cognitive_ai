@@ -18,6 +18,8 @@ var loggingEndpoint = {
 				var jsonMessage = JSON.parse(message.data);				
 				loggingEndpoint.log(jsonMessage.level, jsonMessage.message);
 			};
+			
+			xhttp.sendRequest("", null, "LogMessageServlet", "GET");
 		},
 		
 		log : function(level, message)
