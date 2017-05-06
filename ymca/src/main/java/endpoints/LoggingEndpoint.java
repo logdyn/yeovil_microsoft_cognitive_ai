@@ -27,6 +27,7 @@ public class LoggingEndpoint extends Endpoint
 
 	private static Map<String, Set<LoggingEndpoint>> endpoints = new HashMap<>();
 	private static Map<String, Deque<JSONObject>> messages = new HashMap<>();
+	private static int messageId = 0;
 	private Session session;
 	private String sessionId;
 
@@ -150,8 +151,13 @@ public class LoggingEndpoint extends Endpoint
 			messageQueue = new ArrayDeque<>();
 		}
 
-		messageQueue.add(jsonMessage);
-		LoggingEndpoint.messages.put(sessionId, messageQueue);
+		if (!jsonMessage.has("id"))
+		{
+			jsonMessage.put("id", messageId);
+			messageId ++;
+			messageQueue.add(jsonMessage);
+			LoggingEndpoint.messages.put(sessionId, messageQueue);
+		}
 	}
 	
 	/**
