@@ -38,7 +38,7 @@ public class LogMessageServlet extends HttpServlet {
 			while (!messageQueue.isEmpty())
 			{
 				JSONObject message = messageQueue.pop();
-				LoggingEndpoint.log(request, Level.parse((String) message.getString("level")), (String) message.get("message"));
+				LoggingEndpoint.log(request, Level.parse((String) message.getString("level")), (String) message.get("message"), false);
 			}
 		}
 	}

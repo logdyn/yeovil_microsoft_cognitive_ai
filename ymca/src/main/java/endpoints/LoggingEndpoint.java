@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 /**
  * Endpoint Class used to log messages and send them to the client
+ * 
  * @author Jake Lewis
  *
  */
@@ -27,7 +28,6 @@ public class LoggingEndpoint extends Endpoint
 
 	private static Map<String, Set<LoggingEndpoint>> endpoints = new HashMap<>();
 	private static Map<String, Deque<JSONObject>> messages = new HashMap<>();
-	private static int messageId = 0;
 	private Session session;
 	private String sessionId;
 
@@ -73,32 +73,54 @@ public class LoggingEndpoint extends Endpoint
 
 	/**
 	 * Logs to all JavaScript Logging Endpoints for all sessions
-	 * @param level The log level e.g. INFO or SEVERE
-	 * @param message The message to display
+	 * 
+	 * @param level
+	 *            The log level e.g. INFO or SEVERE
+	 * @param message
+	 *            The message to display
 	 */
 	public static void log(final Level level, final String message)
 	{
-		LoggingEndpoint.log((String) null, level, message);
+		LoggingEndpoint.log((String) null, level, message, true);
+	}
+
+	/**
+	 * Logs to all JavaScript Logging Endpoints for a specific session, logs to
+	 * all sessions if ID is <code>null</code>
+	 * 
+	 * @param request
+	 *            The request to get the session to send the message to
+	 * @param level
+	 *            The log level e.g. INFO or SEVERE
+	 * @param message
+	 *            The message to display
+	 */
+	public static void log(final HttpServletRequest request, final Level level, final String message)
+	{
+		LoggingEndpoint.log(request.getRequestedSessionId(), level, message, true);
 	}
 	
-	/**
-	 * Logs to all JavaScript Logging Endpoints for a specific session, logs to all sessions if ID is <code>null</code>
-	 * @param request The request to get the session to send the message to
-	 * @param level The log level e.g. INFO or SEVERE
-	 * @param message The message to display
-	 */
-	public static void log (final HttpServletRequest request, final Level level, final String message)
+	public static void log(final HttpServletRequest request, final Level level, final String message, boolean queue)
 	{
-		LoggingEndpoint.log(request.getRequestedSessionId(), level, message);
+		LoggingEndpoint.log(request.getRequestedSessionId(), level, message, queue);
+	}
+	
+	public static void log(final String sessionId, final Level level, final String message)
+	{
+		LoggingEndpoint.log(sessionId, level, message, true);
 	}
 
 	/**
 	 * Logs to all JavaScript Logging Endpoints for a specific session
-	 * @param sessionId The session to send the message to
-	 * @param level The log level e.g. INFO or SEVERE
-	 * @param message The message to display
+	 * 
+	 * @param sessionId
+	 *            The session to send the message to
+	 * @param level
+	 *            The log level e.g. INFO or SEVERE
+	 * @param message
+	 *            The message to display
 	 */
-	public static void log(final String sessionId, final Level level, final String message)
+	public static void log(final String sessionId, final Level level, final String message, boolean queue)
 	{
 		final JSONObject jsonMessage = new JSONObject();
 		jsonMessage.put("level", level.getName());
@@ -114,11 +136,14 @@ public class LoggingEndpoint extends Endpoint
 					endpoint.session.getAsyncRemote().sendText(jsonMessage.toString());
 				}
 			}
-			
-			//Queue message for all sessions
-			for (String tempSessionId : LoggingEndpoint.endpoints.keySet())
+
+			// Queue message for all sessions
+			if (queue)
 			{
-				queueMessage(tempSessionId, jsonMessage);
+				for (String tempSessionId : LoggingEndpoint.endpoints.keySet())
+				{
+					queueMessage(tempSessionId, jsonMessage);
+				}
 			}
 		}
 		else
@@ -130,9 +155,8 @@ public class LoggingEndpoint extends Endpoint
 				{
 					endpoint.session.getAsyncRemote().sendText(jsonMessage.toString());
 				}
-				
-				//Add message to queue for the sessionId
-				queueMessage(sessionId, jsonMessage);
+
+				if (queue) {queueMessage(sessionId, jsonMessage);}
 			}
 			else
 			{
@@ -145,24 +169,21 @@ public class LoggingEndpoint extends Endpoint
 	private static void queueMessage(final String sessionId, final JSONObject jsonMessage)
 	{
 		Deque<JSONObject> messageQueue = LoggingEndpoint.messages.get(sessionId);
-		
+
 		if (null == messageQueue)
 		{
 			messageQueue = new ArrayDeque<>();
 		}
-
-		if (!jsonMessage.has("id"))
-		{
-			jsonMessage.put("id", messageId);
-			messageId ++;
-			messageQueue.add(jsonMessage);
-			LoggingEndpoint.messages.put(sessionId, messageQueue);
-		}
+		
+		messageQueue.add(jsonMessage);
+		LoggingEndpoint.messages.put(sessionId, messageQueue);
 	}
-	
+
 	/**
 	 * Returns the queue of existing messages for a given session
-	 * @param sessionId The session ID for the session messages to be retrieved
+	 * 
+	 * @param sessionId
+	 *            The session ID for the session messages to be retrieved
 	 * @return The queue of messages
 	 */
 	public static Deque<JSONObject> getMessages(String sessionId)

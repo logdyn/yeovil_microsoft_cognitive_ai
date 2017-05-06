@@ -9,7 +9,7 @@ import java.util.Set;
 public enum Module
 {
 	TEST("Test", "/WEB-INF/modules/test.html"),
-	WEBCAM("Webcam", "/WEB-INF/modules/webcam.html", "js/webcam.js", "js/xhttp.js", "css/webcam.css"),
+	WEBCAM("Webcam", "/WEB-INF/modules/webcam.html", "js/webcam.js", "css/webcam.css"),
 	CONTROLS("Controls", "/WEB-INF/modules/controls.jsp", "js/controls.js"),
 	OUTPUT_LOG("Output Log", "/WEB-INF/modules/output_log.html", "js/outputLog.js", "css/output_log.css"),
 	QR_CODE("QR-Code", "/WEB-INF/modules/qrcode.html", "./css/qrcode.css");
