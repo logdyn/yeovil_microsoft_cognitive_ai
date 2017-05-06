@@ -19,8 +19,13 @@ var loggingEndpoint = {
 				loggingEndpoint.log(jsonMessage.level, jsonMessage.message);
 			};
 			
-			xhttp.sendRequest("", null, "LogMessageServlet", "GET");
+			loggingEndpoint.requestExistingMessages();
 		},
+		
+		requestExistingMessages : function()
+		{
+			xhttp.sendRequest("", null, "LogMessageServlet", "GET");
+		},		
 		
 		log : function(level, message)
 		{
