@@ -1,9 +1,9 @@
 package endpoints;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -117,15 +117,7 @@ public class LoggingEndpoint extends Endpoint
 			//Queue message for all sessions
 			for (String tempSessionId : LoggingEndpoint.endpoints.keySet())
 			{
-				Deque<JSONObject> messageQueue = LoggingEndpoint.messages.get(tempSessionId);
-				
-				if (null == messageQueue)
-				{
-					messageQueue = new LinkedList<>();
-				}
-
-				messageQueue.add(jsonMessage);
-				LoggingEndpoint.messages.put(tempSessionId, messageQueue);
+				queueMessage(tempSessionId, jsonMessage);
 			}
 		}
 		else
@@ -139,15 +131,7 @@ public class LoggingEndpoint extends Endpoint
 				}
 				
 				//Add message to queue for the sessionId
-				Deque<JSONObject> messageQueue = LoggingEndpoint.messages.get(sessionId);
-				
-				if (null == messageQueue)
-				{
-					messageQueue = new LinkedList<>();
-				}
-
-				messageQueue.add(jsonMessage);
-				LoggingEndpoint.messages.put(sessionId, messageQueue);
+				queueMessage(sessionId, jsonMessage);
 			}
 			else
 			{
@@ -155,6 +139,19 @@ public class LoggingEndpoint extends Endpoint
 				System.err.println(level.getName() + ": " + message);
 			}
 		}
+	}
+
+	private static void queueMessage(final String sessionId, final JSONObject jsonMessage)
+	{
+		Deque<JSONObject> messageQueue = LoggingEndpoint.messages.get(sessionId);
+		
+		if (null == messageQueue)
+		{
+			messageQueue = new ArrayDeque<>();
+		}
+
+		messageQueue.add(jsonMessage);
+		LoggingEndpoint.messages.put(sessionId, messageQueue);
 	}
 	
 	/**
@@ -165,10 +162,5 @@ public class LoggingEndpoint extends Endpoint
 	public static Deque<JSONObject> getMessages(String sessionId)
 	{
 		return LoggingEndpoint.messages.get(sessionId);
-	}
-
-	public static void log(HttpServletRequest request, JSONObject message)
-	{
-		LoggingEndpoint.log(request, Level.parse((String) message.getString("level")), (String) message.get("message"));
 	}
 }
