@@ -11,6 +11,7 @@ var loggingEndpoint = {
 				//Sets up the logger instance with the correct session ID
 				loggingEndpoint.sendId(sessionId);
                 loggingEndpoint.log('FINE', 'Connection to server log opened');
+                loggingEndpoint.requestExistingMessages();
 			};
 			
 			websocket.onmessage = function(message) 
@@ -18,8 +19,6 @@ var loggingEndpoint = {
 				var jsonMessage = JSON.parse(message.data);				
 				loggingEndpoint.log(jsonMessage.level, jsonMessage.message);
 			};
-			
-			loggingEndpoint.requestExistingMessages();
 		},
 		
 		requestExistingMessages : function()
