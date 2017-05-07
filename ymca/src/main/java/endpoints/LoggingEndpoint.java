@@ -1,5 +1,6 @@
 package endpoints;
 
+import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
@@ -21,7 +22,6 @@ import org.json.JSONObject;
  * Endpoint Class used to log messages and send them to the client
  * 
  * @author Jake Lewis
- *
  */
 public class LoggingEndpoint extends Endpoint
 {
@@ -99,12 +99,13 @@ public class LoggingEndpoint extends Endpoint
 	{
 		LoggingEndpoint.log(request.getRequestedSessionId(), level, message, true);
 	}
-	
-	public static void log(final HttpServletRequest request, final Level level, final String message, boolean queue)
+
+	public static void log(final HttpServletRequest request, final Level level, final String message,
+	        final boolean queue)
 	{
 		LoggingEndpoint.log(request.getRequestedSessionId(), level, message, queue);
 	}
-	
+
 	public static void log(final String sessionId, final Level level, final String message)
 	{
 		LoggingEndpoint.log(sessionId, level, message, true);
@@ -120,7 +121,7 @@ public class LoggingEndpoint extends Endpoint
 	 * @param message
 	 *            The message to display
 	 */
-	public static void log(final String sessionId, final Level level, final String message, boolean queue)
+	public static void log(final String sessionId, final Level level, final String message, final boolean queue)
 	{
 		final JSONObject jsonMessage = new JSONObject();
 		jsonMessage.put("level", level.getName());
@@ -129,18 +130,15 @@ public class LoggingEndpoint extends Endpoint
 		// If sessionID is not specified, notify all endpoints
 		if (null == sessionId)
 		{
-			for (final Set<LoggingEndpoint> set : LoggingEndpoint.endpoints.values())
+			for (final Set<LoggingEndpoint> endpoints : LoggingEndpoint.endpoints.values())
 			{
-				for (final LoggingEndpoint endpoint : set)
-				{
-					endpoint.session.getAsyncRemote().sendText(jsonMessage.toString());
-				}
+				logToClient(endpoints, jsonMessage);
 			}
 
 			// Queue message for all sessions
 			if (queue)
 			{
-				for (String tempSessionId : LoggingEndpoint.endpoints.keySet())
+				for (final String tempSessionId : LoggingEndpoint.endpoints.keySet())
 				{
 					queueMessage(tempSessionId, jsonMessage);
 				}
@@ -151,12 +149,12 @@ public class LoggingEndpoint extends Endpoint
 			final Set<LoggingEndpoint> sessionEndpoints = LoggingEndpoint.endpoints.get(sessionId);
 			if (null != sessionEndpoints)
 			{
-				for (final LoggingEndpoint endpoint : sessionEndpoints)
-				{
-					endpoint.session.getAsyncRemote().sendText(jsonMessage.toString());
-				}
+				logToClient(sessionEndpoints, jsonMessage);
 
-				if (queue) {queueMessage(sessionId, jsonMessage);}
+				if (queue)
+				{
+					queueMessage(sessionId, jsonMessage);
+				}
 			}
 			else
 			{
@@ -174,7 +172,7 @@ public class LoggingEndpoint extends Endpoint
 		{
 			messageQueue = new ArrayDeque<>();
 		}
-		
+
 		messageQueue.add(jsonMessage);
 		LoggingEndpoint.messages.put(sessionId, messageQueue);
 	}
@@ -186,8 +184,33 @@ public class LoggingEndpoint extends Endpoint
 	 *            The session ID for the session messages to be retrieved
 	 * @return The queue of messages
 	 */
-	public static Deque<JSONObject> getMessages(String sessionId)
+	public static Deque<JSONObject> getMessages(final String sessionId)
 	{
 		return LoggingEndpoint.messages.get(sessionId);
+	}
+
+	public static void sendQueuedMessages(final JSONObject messageObject)
+	{
+		final Set<LoggingEndpoint> sessionEndpoints = LoggingEndpoint.endpoints.get(messageObject.get("sessionId"));
+
+		logToClient(sessionEndpoints, messageObject);
+	}
+
+	private static void logToClient(final Set<LoggingEndpoint> endpoints, final JSONObject message)
+	{
+		if (null != endpoints)
+		{
+			for (final LoggingEndpoint endpoint : endpoints)
+			{
+				try
+				{
+					endpoint.session.getBasicRemote().sendText(message.toString());
+				}
+				catch (final IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }

@@ -2,13 +2,13 @@ package servlets;
 
 import java.io.IOException;
 import java.util.Deque;
-import java.util.logging.Level;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import endpoints.LoggingEndpoint;
@@ -30,16 +30,25 @@ public class LogMessageServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Deque<JSONObject> messageQueue = LoggingEndpoint.getMessages(request.getRequestedSessionId());
+	@Override
+	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+		final Deque<JSONObject> messageQueue = LoggingEndpoint.getMessages(request.getRequestedSessionId());
 		
-		if (null != messageQueue)
+		if (null != messageQueue && !messageQueue.isEmpty())
 		{
+			final JSONObject messageObject = new JSONObject();
+			final JSONArray messageArray = new JSONArray();
+			
+			messageObject.put("sessionId", request.getRequestedSessionId());
+			
 			while (!messageQueue.isEmpty())
 			{
-				JSONObject message = messageQueue.pop();
-				LoggingEndpoint.log(request, Level.parse((String) message.getString("level")), (String) message.get("message"), false);
+				messageArray.put(messageQueue.pop());		
 			}
+			
+			messageObject.put("messageArray", messageArray);
+			
+			LoggingEndpoint.sendQueuedMessages(messageObject);
 		}
 	}
 

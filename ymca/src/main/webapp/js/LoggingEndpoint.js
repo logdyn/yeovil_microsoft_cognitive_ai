@@ -16,8 +16,19 @@ var loggingEndpoint = {
 			
 			websocket.onmessage = function(message) 
 			{
-				var jsonMessage = JSON.parse(message.data);				
-				loggingEndpoint.log(jsonMessage.level, jsonMessage.message);
+				var jsonMessage = JSON.parse(message.data);			
+				
+				if (jsonMessage.sessionId)
+				{
+					for (i in jsonMessage.messageArray)
+					{
+						loggingEndpoint.log(jsonMessage.messageArray[i].level, jsonMessage.messageArray[i].message);
+					}
+				}
+				else
+				{
+					loggingEndpoint.log(jsonMessage.level, jsonMessage.message);
+				}
 			};
 		},
 		
