@@ -75,18 +75,40 @@ public class Digest
 	 * 
 	 * @param password the password to generate a digest for.
 	 * @return a Digest
-	 * @throws NoSuchAlgorithmException if the digest algorithm is not found
+	 * @throws NoSuchAlgorithmException if the digest algorithm is not supported
 	 */
 	public static Digest fromPlainText(final CharSequence password) throws NoSuchAlgorithmException
 	{
-			Objects.requireNonNull(password, "password cannot be null");
-			SecretKeyCredentialHandler handler = new SecretKeyCredentialHandler();
-			handler.setAlgorithm(Digest.ALGORITHM);
-			handler.setKeyLength(Digest.KEY_LENGTH);
-			handler.setIterations(Digest.ITERATIONS);
-			handler.setSaltLength(Digest.SALT_LENGTH);
-
-			return new Digest(handler.mutate(password.toString()));
+		Objects.requireNonNull(password, "password cannot be null");
+		SecretKeyCredentialHandler handler = Digest.getCredentialHandler();
+		return new Digest(handler.mutate(password.toString()));
+	}
+	
+	/**
+	 * Checks to see if the input credentials match the stored credentials
+	 * 
+	 * @param inputCredentials User provided credentials
+	 * @return {@code true} if the inputCredentials match the storedCredentials, otherwise {@code false}
+	 * @throws NoSuchAlgorithmException if the digest algorithm is not supported
+	 */
+	public boolean matches (final CharSequence inputCredentials) throws NoSuchAlgorithmException
+	{
+		SecretKeyCredentialHandler handler = Digest.getCredentialHandler();
+		return handler.matches(inputCredentials.toString(), this.Value);
+	}
+	
+	/**
+	 * @return the CredentialHandler that this class uses to store passwords.
+	 * @throws NoSuchAlgorithmException if the digest algorithm is not supported
+	 */
+	private static SecretKeyCredentialHandler getCredentialHandler() throws NoSuchAlgorithmException
+	{
+		SecretKeyCredentialHandler handler = new SecretKeyCredentialHandler();
+		handler.setAlgorithm(Digest.ALGORITHM);
+		handler.setKeyLength(Digest.KEY_LENGTH);
+		handler.setIterations(Digest.ITERATIONS);
+		handler.setSaltLength(Digest.SALT_LENGTH);
+		return handler;
 	}
 
 	/**
