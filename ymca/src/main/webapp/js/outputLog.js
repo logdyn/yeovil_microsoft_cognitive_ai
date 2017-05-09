@@ -14,16 +14,18 @@ var outputLog =
 		});
 	},
 	
-	append : function(level, message) 
+	append : function(logRecord) 
 	{
 		var logElements = Array.from(document
 				.getElementsByClassName("logElement"));
 		logElements.forEach(function(log) 
 		{
 			var levelClass;
+            var time = logRecord.time ? new Date(logRecord.time) : new Date();
+            var timeHTML = '<time datetime=' + time.toISOString() + ' title="' + time.toISOString() + '">' + time.toLocaleTimeString() + '</time>';
 			var iconHTML = '<span class="glyphicon';
 			
-			switch (level) 
+			switch (logRecord.level) 
 			{
 				case 'FINE':
 					levelClass = "text-success";
@@ -43,11 +45,11 @@ var outputLog =
 					levelClass = "text-danger";
 					break;
 				default:
-					levelClass = "text-" + level.toLowerCase();
+					levelClass = "text-" + logRecord.level.toLowerCase();
 			}
 			
 			iconHTML += '"></span>';
-			var messageHTML = '<samp class="' + levelClass + '">' + iconHTML + level + " : " +  message + '</samp><br/>';
+			var messageHTML = '<samp class="' + levelClass + '">' + iconHTML + timeHTML + ' : ' +  logRecord.level + " : " +  logRecord.message + '</samp><br/>';
 			log.innerHTML += messageHTML;
 			
 			if (!outputLog.isHover)

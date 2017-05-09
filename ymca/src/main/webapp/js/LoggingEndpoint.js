@@ -10,26 +10,26 @@ var loggingEndpoint = {
 			{
 				//Sets up the logger instance with the correct session ID
 				loggingEndpoint.sendId(sessionId);
-                loggingEndpoint.log('FINE', 'Connection to server log opened');
+                loggingEndpoint.log({level:'FINE', message:'Connection to server log opened'});
 			};
 			
 			websocket.onmessage = function(message) 
 			{
 				var jsonMessage = JSON.parse(message.data);				
-				loggingEndpoint.log(jsonMessage.level, jsonMessage.message);
+				loggingEndpoint.log(jsonMessage);
 			};
 		},
 		
-		log : function(level, message)
+		log : function(logRecord)
 		{
-			level = level.toUpperCase();
+			logRecord.level = logRecord.level.toUpperCase();
 			var func;
 			if(typeof outputLog === "object")
 			{
-				outputLog.append(level, message);
+				outputLog.append(logRecord);
 			}
 			
-			switch (level) 
+			switch (logRecord.level) 
 			{
 				case 'INFO':
 					func = console.info;
@@ -46,7 +46,7 @@ var loggingEndpoint = {
 					func = console.log;
 			}
 			
-			func(level + " : " + message);
+			func(logRecord.level + " : " + logRecord.message);
 		},
 		
 		closeConnect : function()

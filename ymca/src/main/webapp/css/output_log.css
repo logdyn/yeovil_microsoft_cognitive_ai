@@ -10,3 +10,25 @@
 	border: 0;
 	overflow: auto;
 }
+.log-filters
+{
+    background: white;
+    color: black;
+}
+.log-filters label
+{
+    margin-bottom: 0;
+    padding-right: 5px;
+}
+.log-filters input.form-control
+{
+    height: auto;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.log-filters button
+{
+    padding-top: 4px;
+    padding-bottom: 4px;
+    vertical-align: inherit;
+}
