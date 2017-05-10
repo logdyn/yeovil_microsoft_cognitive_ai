@@ -21,6 +21,10 @@
 {
     display: none;
 }
+.logElement .filtered
+{
+    display: none;
+}
 .log-filters
 {
     background: white;

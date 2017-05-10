@@ -13,10 +13,14 @@ var outputLog =
 			log.addEventListener("mouseout", function(){outputLog.isHover = false});
             Array.from(log.parentElement.getElementsByTagName("input")).forEach(function(input)
             {
-               if(input.type === "checkbox")
-               {
-                   input.addEventListener("change", outputLog.toggleLevelVisible);
-               }
+                if(input.type === "checkbox")
+                {
+                    input.addEventListener("change", outputLog.toggleLevelVisible);
+                }
+                else if(input.type === "search")
+                {
+                    input.addEventListener("input", outputLog.filterEvent);
+                }
             });
             Array.from(log.parentElement.getElementsByTagName("button")).forEach(function(button)
             {
@@ -60,7 +64,7 @@ var outputLog =
 			}
 			
 			iconHTML += '"></span>';
-			var messageHTML = '<samp class="' + levelClass + '">' + iconHTML + timeHTML + logRecord.level + " : " +  logRecord.message + '<br/></samp>';
+			var messageHTML = '<samp class="' + levelClass + '">' + iconHTML + timeHTML + logRecord.level + " : " +  outputLog.escapeHtml(logRecord.message) + '<br/></samp>';
 			log.innerHTML += messageHTML;
 			
 			if (!outputLog.isHover)
@@ -70,10 +74,44 @@ var outputLog =
 		});
 	},
     
+    escapeHtml : function(unsafe)
+    {
+        return unsafe
+             .replace(/&/g, "&amp;")
+             .replace(/</g, "&lt;")
+             .replace(/>/g, "&gt;")
+             .replace(/"/g, "&quot;")
+             .replace(/'/g, "&#039;");
+    },
+    
     toggleLevelVisible : function(event)
     {
         var target = event.target;
         target.parentElement.parentElement.nextElementSibling.classList.toggle(target.name, !target.checked);
+    },
+    
+    filterEvent : function(event)
+    {
+        const timestampRegEx = /<span class="timestamp">.*?<\/span>/;
+        const filterRegEx = new RegExp(event.target.value, 'gi');
+        const logElements = event.target.parentElement.parentElement.nextElementSibling;
+        Array.from(logElements.getElementsByTagName('samp')).forEach(function(samp)
+        {
+            const timeStamp = samp.innerHTML.match(timestampRegEx)[0];
+            const searchableText = samp.innerHTML.substr(samp.innerHTML.search(timestampRegEx) + timeStamp.length);
+            const cleanSearchableText = searchableText.replace(/<[\/\w\d]*?>/g, "");
+            const filtered = cleanSearchableText.search(filterRegEx) == -1
+            samp.classList.toggle('filtered', filtered);
+            if(filtered || !event.target.value)
+            {
+                samp.innerHTML = samp.innerHTML.replace(searchableText, cleanSearchableText);
+            }
+            else
+            {
+                samp.innerHTML = samp.innerHTML.replace(searchableText, cleanSearchableText.replace(filterRegEx, "<mark>$&</mark>"));
+            }
+            samp.innerHTML += "</br>";
+        });
     },
     
     clear: function(event)
