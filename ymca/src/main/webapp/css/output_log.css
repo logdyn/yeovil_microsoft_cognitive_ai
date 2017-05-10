@@ -30,6 +30,7 @@
 {
     margin-bottom: 0;
     padding-right: 5px;
+    cursor: pointer;
 }
 .log-filters input.form-control
 {

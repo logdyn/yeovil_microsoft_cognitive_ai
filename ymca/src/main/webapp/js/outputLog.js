@@ -32,8 +32,8 @@ var outputLog =
 		logElements.forEach(function(log) 
 		{
 			var levelClass;
-            var time = logRecord.time ? new Date(logRecord.time) : new Date();
-            var timeHTML = '<span class="timestamp"><time datetime=' + time.toISOString() + ' title="' + time.toISOString() + '">' + time.toLocaleTimeString() + '</time> : </span>';
+            var date = logRecord.timestamp ? new Date(logRecord.timestamp) : new Date();
+            var timeHTML = '<span class="timestamp"><time datetime=' + date.toISOString() + ' title="' + date.toISOString() + '">' + date.toLocaleTimeString() + '</time> : </span>';
 			var iconHTML = '<span class="glyphicon';
 			
 			switch (logRecord.level) 
@@ -60,7 +60,7 @@ var outputLog =
 			}
 			
 			iconHTML += '"></span>';
-			var messageHTML = '<samp class="' + levelClass + '">' + iconHTML + timeHTML +  logRecord.level + " : " +  logRecord.message + '<br/></samp>';
+			var messageHTML = '<samp class="' + levelClass + '">' + iconHTML + timeHTML + logRecord.level + " : " +  logRecord.message + '<br/></samp>';
 			log.innerHTML += messageHTML;
 			
 			if (!outputLog.isHover)
