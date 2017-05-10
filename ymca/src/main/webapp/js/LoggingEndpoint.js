@@ -62,6 +62,6 @@ var loggingEndpoint = {
 
 window.addEventListener('error', function(msg)
 {
-    loggingEndpoint.log('ERROR', msg.message || msg);
+    loggingEndpoint.log({level:'ERROR', message:(msg.message || msg)});
 });
 document.addEventListener('DOMContentLoaded', loggingEndpoint.init, false);

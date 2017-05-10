@@ -11,6 +11,17 @@ var outputLog =
 		{
 			log.addEventListener("mouseover", function(){outputLog.isHover = true});
 			log.addEventListener("mouseout", function(){outputLog.isHover = false});
+            Array.from(log.parentElement.getElementsByTagName("input")).forEach(function(input)
+            {
+               if(input.type === "checkbox")
+               {
+                   input.addEventListener("change", outputLog.toggleLevelVisible);
+               }
+            });
+            Array.from(log.parentElement.getElementsByTagName("button")).forEach(function(button)
+            {
+                button.addEventListener("click", outputLog.clear, true);//currenty only button is for clearing
+            });
 		});
 	},
 	
@@ -22,7 +33,7 @@ var outputLog =
 		{
 			var levelClass;
             var time = logRecord.time ? new Date(logRecord.time) : new Date();
-            var timeHTML = '<time datetime=' + time.toISOString() + ' title="' + time.toISOString() + '">' + time.toLocaleTimeString() + '</time>';
+            var timeHTML = '<span class="timestamp"><time datetime=' + time.toISOString() + ' title="' + time.toISOString() + '">' + time.toLocaleTimeString() + '</time> : </span>';
 			var iconHTML = '<span class="glyphicon';
 			
 			switch (logRecord.level) 
@@ -49,7 +60,7 @@ var outputLog =
 			}
 			
 			iconHTML += '"></span>';
-			var messageHTML = '<samp class="' + levelClass + '">' + iconHTML + timeHTML + ' : ' +  logRecord.level + " : " +  logRecord.message + '</samp><br/>';
+			var messageHTML = '<samp class="' + levelClass + '">' + iconHTML + timeHTML +  logRecord.level + " : " +  logRecord.message + '<br/></samp>';
 			log.innerHTML += messageHTML;
 			
 			if (!outputLog.isHover)
@@ -57,7 +68,18 @@ var outputLog =
 				log.scrollTop = log.scrollHeight;
 			}		
 		});
-	}
+	},
+    
+    toggleLevelVisible : function(event)
+    {
+        var target = event.target;
+        target.parentElement.parentElement.nextElementSibling.classList.toggle(target.name, !target.checked);
+    },
+    
+    clear: function(event)
+    {
+        event.target.parentElement.parentElement.parentElement.querySelector('.logElement').innerHTML='';
+    }
 }
 
 document.addEventListener('DOMContentLoaded', outputLog.init, false);

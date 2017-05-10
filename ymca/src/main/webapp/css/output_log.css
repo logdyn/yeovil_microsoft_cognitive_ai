@@ -10,6 +10,17 @@
 	border: 0;
 	overflow: auto;
 }
+.logElement.hide-error .text-danger,
+.logElement.hide-warning .text-warning,
+.logElement.hide-info .text-info,
+.logElement.hide-config .text-config,
+.logElement.hide-fine .text-success,
+.logElement.hide-finer .text-finer,
+.logElement.hide-finest .text-finer,
+.logElement.hide-timestamp .timestamp
+{
+    display: none;
+}
 .log-filters
 {
     background: white;
