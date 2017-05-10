@@ -12,6 +12,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import endpoints.LoggingEndpoint;
+import models.LogMessage;
 
 /**
  * Servlet Filter implementation class LoggingFilter
@@ -37,15 +38,15 @@ public class LoggingFilter implements Filter
 		{
 			chain.doFilter(request, response);
 		}
-		catch (Throwable e)
+		catch (final Throwable e)
 		{
 			if (request instanceof HttpServletRequest)
 			{
-				LoggingEndpoint.log((HttpServletRequest) request, Level.SEVERE, e.getMessage());
+				LoggingEndpoint.log(new LogMessage((HttpServletRequest) request, Level.SEVERE, e.getMessage()));
 			}
 			else
 			{
-				LoggingEndpoint.log(Level.SEVERE, e.getMessage());
+				LoggingEndpoint.log(new LogMessage(Level.SEVERE, e.getMessage()));
 			}
 			throw e;
 		}

@@ -11,18 +11,17 @@ var loggingEndpoint = {
 				//Sets up the logger instance with the correct session ID
 				loggingEndpoint.sendId(sessionId);
                 loggingEndpoint.log('FINE', 'Connection to server log opened');
-                loggingEndpoint.requestExistingMessages();
 			};
 			
-			websocket.onmessage = function(message) 
+			websocket.onmessage = function(message)
 			{
 				var jsonMessage = JSON.parse(message.data);			
 				
-				if (jsonMessage.sessionId)
+				if (Array.isArray(jsonMessage))
 				{
-					for (i in jsonMessage.messageArray)
+					for (i in jsonMessage)
 					{
-						loggingEndpoint.log(jsonMessage.messageArray[i].level, jsonMessage.messageArray[i].message);
+						loggingEndpoint.log(jsonMessage[i].level, jsonMessage[i].message);
 					}
 				}
 				else
@@ -31,11 +30,6 @@ var loggingEndpoint = {
 				}
 			};
 		},
-		
-		requestExistingMessages : function()
-		{
-			xhttp.sendRequest("", null, "LogMessageServlet", "GET");
-		},		
 		
 		log : function(level, message)
 		{
