@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONString;
 
@@ -68,6 +69,14 @@ public class LogMessage implements Comparable<LogMessage>, JSONString
 	public LogMessage(final String sessionId, final Level level, final String message)
 	{
 		this(sessionId, level, message, TimeFactory.currentTimeMillis());
+	}
+	
+	public LogMessage(final JSONObject jsonObject) throws JSONException
+	{
+		this.sessionId = jsonObject.optString("sessionId", null);
+		this.level = Level.parse(jsonObject.optString("level", "FINE"));
+		this.message = jsonObject.getString("message");
+		this.timestamp = jsonObject.optLong("timestamp", TimeFactory.currentTimeMillis());
 	}
 	
 	/**
