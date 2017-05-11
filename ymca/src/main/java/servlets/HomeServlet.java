@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import endpoints.LoggingEndpoint;
+import models.LogMessage;
 import models.modules.Module;
 import models.modules.ModuleUtils;
 
@@ -54,7 +55,7 @@ public class HomeServlet extends HttpServlet
 				}
 				else
 				{
-					LoggingEndpoint.log(request, Level.WARNING, "No module found with name: " + moduleName);
+					LoggingEndpoint.log(new LogMessage(request, Level.WARNING, "No module found with name: " + moduleName));
 				}
 			}
 		}

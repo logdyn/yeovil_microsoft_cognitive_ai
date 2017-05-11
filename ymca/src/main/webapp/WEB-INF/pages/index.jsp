@@ -28,6 +28,7 @@
 			<%
 		}
 		%>
+		<script src="js/xhttp.js"></script>
 		<script src="js/LoggingEndpoint.js"></script>
 		<script src="js/modules.js"></script>
 		<%

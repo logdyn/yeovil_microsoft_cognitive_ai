@@ -27,6 +27,9 @@
   <listener>
   	<listener-class>listeners.DatabaseListener</listener-class>
   </listener>
+  <listener>
+  	<listener-class>listeners.HttpListener</listener-class>
+  </listener>
   <servlet>
   	<servlet-name>AccountServlet</servlet-name>
   	<display-name>AccountServlet</display-name>

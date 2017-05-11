@@ -19,7 +19,6 @@ public class WebsocketConfig implements ServerApplicationConfig
 			private static final long serialVersionUID = 1L;
 
 			{
-				this.add(ServerEndpointConfig.Builder.create(ExampleListenerEndpoint.class, "/ExampleListenerEndpoint").build());
 				this.add(ServerEndpointConfig.Builder.create(LoggingEndpoint.class, "/LoggingEndpoint").build());
 			}
 		};
