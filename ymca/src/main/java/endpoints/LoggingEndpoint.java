@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.logging.Level;
 
 import javax.websocket.CloseReason;
 import javax.websocket.Endpoint;
@@ -14,6 +15,8 @@ import javax.websocket.MessageHandler;
 import javax.websocket.Session;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import models.LogMessage;
 
@@ -37,25 +40,52 @@ public class LoggingEndpoint extends Endpoint
 		session.addMessageHandler(new MessageHandler.Whole<String>()
 		{
 			@Override
-			public void onMessage(final String text)
+			public void onMessage(final String jsonString)
 			{
-				LoggingEndpoint.this.sessionId = text;
-				Set<LoggingEndpoint> set = LoggingEndpoint.endpoints.get(LoggingEndpoint.this.sessionId);
-
-				if (null == set)
-				{
-					set = new HashSet<>();
-					LoggingEndpoint.endpoints.put(LoggingEndpoint.this.sessionId, set);
-				}
-
-				set.add(LoggingEndpoint.this);
-
-				final SortedSet<LogMessage> messageQueue = LoggingEndpoint.messages.get(text);
+				JSONObject jsonObject = new JSONObject(jsonString);
 				
-				if (null != messageQueue && !messageQueue.isEmpty())
+				if (jsonObject.has("httpSessionId"))
 				{
-					LoggingEndpoint.logToClient(LoggingEndpoint.this, new JSONArray(messageQueue).toString());
+					LoggingEndpoint.this.sessionId = jsonObject.getString("httpSessionId");
+					Set<LoggingEndpoint> set = LoggingEndpoint.endpoints.get(LoggingEndpoint.this.sessionId);
+
+					if (null == set)
+					{
+						set = new HashSet<>();
+						LoggingEndpoint.endpoints.put(LoggingEndpoint.this.sessionId, set);
+					}
+
+					set.add(LoggingEndpoint.this);
+
+					final SortedSet<LogMessage> messageQueue = LoggingEndpoint.messages.get(LoggingEndpoint.this.sessionId);
+					
+					if (null != messageQueue && !messageQueue.isEmpty())
+					{
+						LoggingEndpoint.logToClient(LoggingEndpoint.this, new JSONArray(messageQueue).toString());
+					}
 				}
+				else
+				{					
+					try
+					{
+						jsonObject.put("sessionId", LoggingEndpoint.this.sessionId);
+						LogMessage logMessage = new LogMessage(jsonObject);
+						queueMessage(logMessage);
+						
+						for (LoggingEndpoint endpoint : LoggingEndpoint.endpoints.get(LoggingEndpoint.this.sessionId))
+						{
+							if (!LoggingEndpoint.this.equals(endpoint))
+							{
+								logToClient(endpoint, logMessage.toJSONString());
+							}
+						}
+					}
+					catch (JSONException ex)
+					{
+						log(new LogMessage(Level.WARNING, ex.getMessage()));
+					}
+				}
+				
 			}
 		});
 	}
@@ -125,8 +155,10 @@ public class LoggingEndpoint extends Endpoint
 			}
 			else
 			{
-				System.err.println(String.format("No LoggingEndpoints regestered for session '%s'", sessionId));
+				System.err.println(String.format("No LoggingEndpoints registered for session '%s'", sessionId));
 				System.err.println(logMessage);
+				LoggingEndpoint.log(new LogMessage(Level.WARNING, 
+						String.format("No LoggingEndpoints registered for session '%s'", sessionId)));
 			}
 		}
 	}
