@@ -74,7 +74,7 @@ public class LogMessage implements Comparable<LogMessage>, JSONString
 	public LogMessage(final JSONObject jsonObject) throws JSONException
 	{
 		this.sessionId = jsonObject.optString("sessionId", null);
-		this.level = Level.parse(jsonObject.optString("level", "FINE"));
+		this.level = Level.parse(jsonObject.optString("level", "FINE").replaceAll("ERROR", "SEVERE"));
 		this.message = jsonObject.getString("message");
 		this.timestamp = jsonObject.optLong("timestamp", TimeFactory.currentTimeMillis());
 	}
