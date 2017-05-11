@@ -70,7 +70,8 @@ var outputLog =
 			if (!outputLog.isHover)
 			{
 				log.scrollTop = log.scrollHeight;
-			}		
+			}
+            outputLog.filterEvent({target : log.parentElement.querySelector('input[type="search"]')});
 		});
 	},
     

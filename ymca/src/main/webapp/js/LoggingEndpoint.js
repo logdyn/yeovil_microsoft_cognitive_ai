@@ -10,7 +10,7 @@ var loggingEndpoint = {
 			{
 				//Sets up the logger instance with the correct session ID
 				loggingEndpoint.sendId(sessionId);
-                loggingEndpoint.log({level:'FINE', message:'Connection to server log opened'});
+                //loggingEndpoint.log({level:'FINE', message:'Connection to server log opened'});
 			};
 			
 			websocket.onmessage = function(message)
