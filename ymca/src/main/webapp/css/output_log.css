@@ -10,6 +10,13 @@
 	border: 0;
 	overflow: auto;
 }
+.logElement .text-config,
+.logElement .text-finer,
+.logElement .text-finest
+{
+    color: #3c763d;
+}
+
 .logElement.hide-error .text-danger,
 .logElement.hide-warning .text-warning,
 .logElement.hide-info .text-info,
