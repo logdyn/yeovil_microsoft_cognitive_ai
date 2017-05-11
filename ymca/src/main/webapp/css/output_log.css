@@ -10,3 +10,41 @@
 	border: 0;
 	overflow: auto;
 }
+.logElement.hide-error .text-danger,
+.logElement.hide-warning .text-warning,
+.logElement.hide-info .text-info,
+.logElement.hide-config .text-config,
+.logElement.hide-fine .text-success,
+.logElement.hide-finer .text-finer,
+.logElement.hide-finest .text-finer,
+.logElement.hide-timestamp .timestamp
+{
+    display: none;
+}
+.logElement .filtered
+{
+    display: none;
+}
+.log-filters
+{
+    background: white;
+    color: black;
+}
+.log-filters label
+{
+    margin-bottom: 0;
+    padding-right: 5px;
+    cursor: pointer;
+}
+.log-filters input.form-control
+{
+    height: auto;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.log-filters button
+{
+    padding-top: 4px;
+    padding-bottom: 4px;
+    vertical-align: inherit;
+}
