@@ -1,6 +1,5 @@
 package endpoints;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -51,17 +50,11 @@ public class LoggingEndpoint extends Endpoint
 
 				set.add(LoggingEndpoint.this);
 
-				final SortedSet<LogMessage> messageQueue = LoggingEndpoint.getMessages(text);
+				final SortedSet<LogMessage> messageQueue = LoggingEndpoint.messages.get(text);
+				
 				if (null != messageQueue && !messageQueue.isEmpty())
 				{
-					final JSONArray messageArray = new JSONArray();
-
-					for (final LogMessage message : messageQueue)
-					{
-						messageArray.put(message);
-					}
-
-					LoggingEndpoint.logToClient(LoggingEndpoint.this, messageArray);
+					LoggingEndpoint.logToClient(LoggingEndpoint.this, new JSONArray(messageQueue).toString());
 				}
 			}
 		});
@@ -86,20 +79,19 @@ public class LoggingEndpoint extends Endpoint
 		}
 	}
 
+	/**
+	 * Logs a message to the client, see {@link LoggingEndpoint#log(LogMessage, boolean)}
+	 * @param logMessage The {@link LogMessage} to log
+	 */
 	public static void log(final LogMessage logMessage)
 	{
 		LoggingEndpoint.log(logMessage, true);
 	}
 
 	/**
-	 * Logs to all JavaScript Logging Endpoints for a specific session
-	 * 
-	 * @param sessionId
-	 *            The session to send the message to
-	 * @param level
-	 *            The log level e.g. INFO or SEVERE
-	 * @param message
-	 *            The message to display
+	 * Logs a message to the endpoint for that message, if no message is specified it will log to all endpoints
+	 * @param logMessage The {@link LogMessage} to log
+	 * @param queue Boolean value, if true queue the message
 	 */
 	public static void log(final LogMessage logMessage, final boolean queue)
 	{
@@ -151,10 +143,8 @@ public class LoggingEndpoint extends Endpoint
 	/**
 	 * Adds a message to the queue of messages for that session ID
 	 * 
-	 * @param sessionId
-	 *            The HTTP session ID
-	 * @param logMessage
-	 *            The message to queue
+	 * @param sessionId The HTTP session ID
+	 * @param logMessage The {@link LogMessage} to queue
 	 */
 	private static void queueMessage(final LogMessage logMessage)
 	{
@@ -163,31 +153,17 @@ public class LoggingEndpoint extends Endpoint
 		if (null == messageQueue)
 		{
 			messageQueue = new TreeSet<>();
+			LoggingEndpoint.messages.put(logMessage.getSessionId(), messageQueue);
 		}
 
 		messageQueue.add(logMessage);
-		LoggingEndpoint.messages.put(logMessage.getSessionId(), messageQueue);
-	}
-
-	/**
-	 * Returns the queue of existing messages for a given session
-	 * 
-	 * @param sessionId
-	 *            The session ID for the session messages to be retrieved
-	 * @return The queue of messages
-	 */
-	public static SortedSet<LogMessage> getMessages(final String sessionId)
-	{
-		return LoggingEndpoint.messages.get(sessionId);
 	}
 
 	/**
 	 * Logs the JSON message to every provided endpoint
 	 * 
-	 * @param endpoints
-	 *            The endpoints to send the message to
-	 * @param message
-	 *            The message
+	 * @param endpoints The endpoints to send the message to
+	 * @param message The message
 	 */
 	private static void logToClient(final Set<LoggingEndpoint> endpoints, final LogMessage message)
 	{
@@ -195,14 +171,7 @@ public class LoggingEndpoint extends Endpoint
 		{
 			for (final LoggingEndpoint endpoint : endpoints)
 			{
-				try
-				{
-					endpoint.session.getBasicRemote().sendText(message.toJSONString());
-				}
-				catch (final IOException e)
-				{
-					e.printStackTrace();
-				}
+				logToClient(endpoint, message.toJSONString());
 			}
 		}
 	}
@@ -215,9 +184,9 @@ public class LoggingEndpoint extends Endpoint
 	 * @param jsonArray
 	 *            A JSON array of log messages
 	 */
-	private static void logToClient(final LoggingEndpoint endpoint, final JSONArray jsonArray)
+	private static void logToClient(final LoggingEndpoint endpoint, final String message)
 	{
-		endpoint.session.getAsyncRemote().sendText(jsonArray.toString());
+		endpoint.session.getAsyncRemote().sendText(message);
 	}
 
 	public static void clearSession(final String id)
