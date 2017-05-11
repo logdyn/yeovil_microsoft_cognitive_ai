@@ -4,26 +4,29 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.websocket.CloseReason;
 import javax.websocket.Endpoint;
 import javax.websocket.EndpointConfig;
 import javax.websocket.MessageHandler;
 import javax.websocket.Session;
 
-import org.json.JSONObject;
+import org.json.JSONArray;
+
+import models.LogMessage;
 
 /**
  * Endpoint Class used to log messages and send them to the client
+ * 
  * @author Jake Lewis
- *
  */
 public class LoggingEndpoint extends Endpoint
 {
 
 	private static Map<String, Set<LoggingEndpoint>> endpoints = new HashMap<>();
+	private static Map<String, SortedSet<LogMessage>> messages = new HashMap<>();
 	private Session session;
 	private String sessionId;
 
@@ -38,12 +41,21 @@ public class LoggingEndpoint extends Endpoint
 			{
 				LoggingEndpoint.this.sessionId = text;
 				Set<LoggingEndpoint> set = LoggingEndpoint.endpoints.get(LoggingEndpoint.this.sessionId);
+
 				if (null == set)
 				{
 					set = new HashSet<>();
 					LoggingEndpoint.endpoints.put(LoggingEndpoint.this.sessionId, set);
 				}
+
 				set.add(LoggingEndpoint.this);
+
+				final SortedSet<LogMessage> messageQueue = LoggingEndpoint.messages.get(text);
+				
+				if (null != messageQueue && !messageQueue.isEmpty())
+				{
+					LoggingEndpoint.logToClient(LoggingEndpoint.this, new JSONArray(messageQueue).toString());
+				}
 			}
 		});
 	}
@@ -68,47 +80,35 @@ public class LoggingEndpoint extends Endpoint
 	}
 
 	/**
-	 * Logs to all JavaScript Logging Endpoints for all sessions
-	 * @param level The log level e.g. INFO or SEVERE
-	 * @param message The message to display
+	 * Logs a message to the client, see {@link LoggingEndpoint#log(LogMessage, boolean)}
+	 * @param logMessage The {@link LogMessage} to log
 	 */
-	public static void log(final Level level, final String message)
+	public static void log(final LogMessage logMessage)
 	{
-		LoggingEndpoint.log((String) null, level, message);
-	}
-	
-	/**
-	 * Logs to all JavaScript Logging Endpoints for a specific session, logs to all sessions if ID is <code>null</code>
-	 * @param request The request to get the session to send the message to
-	 * @param level The log level e.g. INFO or SEVERE
-	 * @param message The message to display
-	 */
-	public static void log (final HttpServletRequest request, final Level level, final String message)
-	{
-		LoggingEndpoint.log(request.getRequestedSessionId(), level, message);
+		LoggingEndpoint.log(logMessage, true);
 	}
 
 	/**
-	 * Logs to all JavaScript Logging Endpoints for a specific session
-	 * @param sessionId The session to send the message to
-	 * @param level The log level e.g. INFO or SEVERE
-	 * @param message The message to display
+	 * Logs a message to the endpoint for that message, if no message is specified it will log to all endpoints
+	 * @param logMessage The {@link LogMessage} to log
+	 * @param queue Boolean value, if true queue the message
 	 */
-	public static void log(final String sessionId, final Level level, final String message)
+	public static void log(final LogMessage logMessage, final boolean queue)
 	{
-		final JSONObject jsonMessage = new JSONObject();
-		jsonMessage.put("level", level.getName());
-		jsonMessage.put("message", message);
-
+		final String sessionId = logMessage.getSessionId();
+		
 		// If sessionID is not specified, notify all endpoints
 		if (null == sessionId)
 		{
-			for (final Set<LoggingEndpoint> set : LoggingEndpoint.endpoints.values())
+			for (final Set<LoggingEndpoint> endpoints : LoggingEndpoint.endpoints.values())
 			{
-				for (final LoggingEndpoint endpoint : set)
-				{
-					endpoint.session.getAsyncRemote().sendText(jsonMessage.toString());
-				}
+				logToClient(endpoints, logMessage);
+			}
+
+			// Queue message for all sessions
+			if (queue)
+			{
+				queueMessageToAll(logMessage);
 			}
 		}
 		else
@@ -116,16 +116,81 @@ public class LoggingEndpoint extends Endpoint
 			final Set<LoggingEndpoint> sessionEndpoints = LoggingEndpoint.endpoints.get(sessionId);
 			if (null != sessionEndpoints)
 			{
-				for (final LoggingEndpoint endpoint : sessionEndpoints)
+				logToClient(sessionEndpoints, logMessage);
+
+				if (queue)
 				{
-					endpoint.session.getAsyncRemote().sendText(jsonMessage.toString());
+					queueMessage(logMessage);
 				}
 			}
 			else
 			{
 				System.err.println(String.format("No LoggingEndpoints regestered for session '%s'", sessionId));
-				System.err.println(level.getName() + ": " + message);
+				System.err.println(logMessage);
 			}
 		}
+	}
+
+	private static void queueMessageToAll(final LogMessage logMessage)
+	{
+		for (final SortedSet<LogMessage> messageSet : LoggingEndpoint.messages.values())
+		{
+			messageSet.add(logMessage);
+		}
+	}
+	
+
+	/**
+	 * Adds a message to the queue of messages for that session ID
+	 * 
+	 * @param sessionId The HTTP session ID
+	 * @param logMessage The {@link LogMessage} to queue
+	 */
+	private static void queueMessage(final LogMessage logMessage)
+	{
+		SortedSet<LogMessage> messageQueue = LoggingEndpoint.messages.get(logMessage.getSessionId());
+
+		if (null == messageQueue)
+		{
+			messageQueue = new TreeSet<>();
+			LoggingEndpoint.messages.put(logMessage.getSessionId(), messageQueue);
+		}
+
+		messageQueue.add(logMessage);
+	}
+
+	/**
+	 * Logs the JSON message to every provided endpoint
+	 * 
+	 * @param endpoints The endpoints to send the message to
+	 * @param message The message
+	 */
+	private static void logToClient(final Set<LoggingEndpoint> endpoints, final LogMessage message)
+	{
+		if (null != endpoints)
+		{
+			for (final LoggingEndpoint endpoint : endpoints)
+			{
+				logToClient(endpoint, message.toJSONString());
+			}
+		}
+	}
+
+	/**
+	 * Send an array of messages to an endpoint
+	 * 
+	 * @param endpoint
+	 *            The endpoint to send the messages to
+	 * @param jsonArray
+	 *            A JSON array of log messages
+	 */
+	private static void logToClient(final LoggingEndpoint endpoint, final String message)
+	{
+		endpoint.session.getAsyncRemote().sendText(message);
+	}
+
+	public static void clearSession(final String id)
+	{
+		LoggingEndpoint.messages.remove(id);
 	}
 }

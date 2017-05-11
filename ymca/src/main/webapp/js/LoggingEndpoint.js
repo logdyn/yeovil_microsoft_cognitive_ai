@@ -13,10 +13,21 @@ var loggingEndpoint = {
                 loggingEndpoint.log('FINE', 'Connection to server log opened');
 			};
 			
-			websocket.onmessage = function(message) 
+			websocket.onmessage = function(message)
 			{
-				var jsonMessage = JSON.parse(message.data);				
-				loggingEndpoint.log(jsonMessage.level, jsonMessage.message);
+				var jsonMessage = JSON.parse(message.data);			
+				
+				if (Array.isArray(jsonMessage))
+				{
+					for (i in jsonMessage)
+					{
+						loggingEndpoint.log(jsonMessage[i].level, jsonMessage[i].message);
+					}
+				}
+				else
+				{
+					loggingEndpoint.log(jsonMessage.level, jsonMessage.message);
+				}
 			};
 		},
 		
