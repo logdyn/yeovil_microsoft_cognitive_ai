@@ -120,6 +120,11 @@
   	<servlet-name>AboutServlet</servlet-name>
   	<url-pattern>/About</url-pattern>
   </servlet-mapping>
+  
+  <session-config>
+  	<session-timeout>7200</session-timeout>
+  </session-config>
+  
   <welcome-file-list>
   	<welcome-file>HomeServlet</welcome-file>
   </welcome-file-list>
