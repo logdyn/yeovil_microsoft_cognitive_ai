@@ -36,7 +36,7 @@ var outputLog =
 		logElements.forEach(function(log) 
 		{
 			var levelClass;
-            var date = logRecord.timestamp ? new Date(logRecord.timestamp) : new Date();
+            var date = new Date(logRecord.timestamp);
             var timeHTML = '<span class="timestamp"><time datetime=' + date.toISOString() + ' title="' + date.toISOString() + '">' + date.toLocaleTimeString() + '</time> : </span>';
 			var iconHTML = '<span class="glyphicon';
 			
