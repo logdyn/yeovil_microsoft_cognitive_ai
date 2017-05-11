@@ -6,6 +6,7 @@ var controls = {
 		var fullscreenBtns = Array.from(document.getElementsByClassName('videoFullscreen'));
 		var capImageBtns = Array.from(document.getElementsByClassName('capImage'));
         var intervalCapBtns = Array.from(document.getElementsByClassName('intervalCapturing'));
+        var logBtns = Array.from(document.getElementsByClassName('logTest'));
 		
 		fullscreenBtns.forEach(function (fullscreenBtn)
         {
@@ -18,6 +19,10 @@ var controls = {
         intervalCapBtns.forEach(function (intervalCapBtn)
         {
             intervalCapBtn.addEventListener('click', controls.intervalCap);
+        });
+        logBtns.forEach(function(logBtn)
+        {
+             logBtn.addEventListener('click', controls.fakeLog);
         });
 	},
 	fullscreen: function (event)
@@ -77,6 +82,10 @@ var controls = {
         {
             webcam.captureImage(controls.captureImage);
         }
+    },
+    fakeLog : function(event)
+    {
+        loggingEndpoint.log({level: event.target.parentElement.parentElement.querySelector('.level-select').value, message:"example message"});
     }
 }
 document.addEventListener('DOMContentLoaded', controls.init);
