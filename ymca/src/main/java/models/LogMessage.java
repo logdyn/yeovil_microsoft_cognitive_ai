@@ -19,10 +19,18 @@ import models.time.TimeFactory;
  */
 public class LogMessage implements Comparable<LogMessage>, JSONString
 {
+	private static final String TIMESTAMP_LABEL = "timestamp";
+	private static final String MESSAGE_LABEL = "message";
+	private static final String LEVEL_LABEL = "level";
+	private static final String SESSION_ID_LABEL = "sessionId";
+	
+	private static final Level DEFAULT_LEVEL = Level.FINE;
+	
 	private final String sessionId;
 	private final Level level;
 	private final String message;
 	private final long timestamp;
+	
 	private String jsonString;
 	private int hashCode = -1;
 	
@@ -33,7 +41,7 @@ public class LogMessage implements Comparable<LogMessage>, JSONString
 	 */
 	public LogMessage(final String message)
 	{
-		this(Level.FINE, message);
+		this(LogMessage.DEFAULT_LEVEL, message);
 	}
 	
 	/**
@@ -56,7 +64,7 @@ public class LogMessage implements Comparable<LogMessage>, JSONString
 	 */
 	public LogMessage(final HttpServletRequest request, final Level level, final String message)
 	{
-		this(request.getRequestedSessionId(), level, message, TimeFactory.currentTimeMillis());
+		this(request.getRequestedSessionId(), level, message);
 	}
 	
 	/**
@@ -73,10 +81,27 @@ public class LogMessage implements Comparable<LogMessage>, JSONString
 	
 	public LogMessage(final JSONObject jsonObject) throws JSONException
 	{
-		this.sessionId = jsonObject.optString("sessionId", null);
-		this.level = Level.parse(jsonObject.optString("level", "FINE").replaceAll("ERROR", "SEVERE"));
-		this.message = jsonObject.getString("message");
-		this.timestamp = jsonObject.optLong("timestamp", TimeFactory.currentTimeMillis());
+		//get timestamp first in order to have most accurate time.
+		this.timestamp = jsonObject.optLong(LogMessage.TIMESTAMP_LABEL, TimeFactory.currentTimeMillis());
+		this.sessionId = jsonObject.optString(LogMessage.SESSION_ID_LABEL, null);
+		this.level = LogMessage.parseLevel(jsonObject);
+		this.message = jsonObject.getString(LogMessage.MESSAGE_LABEL);
+	}
+	
+	private static final Level parseLevel(final JSONObject jsonObject)
+	{
+		final String levelName = jsonObject.optString(LogMessage.LEVEL_LABEL);
+		switch (levelName)
+		{
+			case "":
+				return LogMessage.DEFAULT_LEVEL;
+			case "ERROR": //map javascript error names on to java Levels
+				return Level.SEVERE;
+			case "WARN":
+				return Level.WARNING;
+			default:
+				return Level.parse(levelName);
+		}
 	}
 	
 	/**
@@ -100,7 +125,7 @@ public class LogMessage implements Comparable<LogMessage>, JSONString
 	 */
 	public String getSessionId()
 	{
-		return sessionId;
+		return this.sessionId;
 	}
 
 	/**
@@ -108,7 +133,7 @@ public class LogMessage implements Comparable<LogMessage>, JSONString
 	 */
 	public Level getLevel()
 	{
-		return level;
+		return this.level;
 	}
 
 	/**
@@ -116,7 +141,7 @@ public class LogMessage implements Comparable<LogMessage>, JSONString
 	 */
 	public String getMessage()
 	{
-		return message;
+		return this.message;
 	}
 
 	/**
@@ -124,7 +149,7 @@ public class LogMessage implements Comparable<LogMessage>, JSONString
 	 */
 	public long getTimestamp()
 	{
-		return timestamp;
+		return this.timestamp;
 	}
 
 	@Override
@@ -134,7 +159,7 @@ public class LogMessage implements Comparable<LogMessage>, JSONString
 			.append(this.timestamp, other.timestamp)
 			.append(this.level.intValue(), other.level.intValue())
 			.append(this.message, other.message)
-			.build();
+			.toComparison();
 	}
 
 	@Override
@@ -143,13 +168,12 @@ public class LogMessage implements Comparable<LogMessage>, JSONString
 		if (this.jsonString == null)
 		{
 			this.jsonString = new JSONObject()
-				.put("sessionId", this.sessionId)
-				.put("level", this.level.getName())
-				.put("message", this.message)
-				.put("timestamp", this.timestamp)
+				.put(LogMessage.SESSION_ID_LABEL, this.sessionId)
+				.put(LogMessage.LEVEL_LABEL, this.level.getName())
+				.put(LogMessage.MESSAGE_LABEL, this.message)
+				.put(LogMessage.TIMESTAMP_LABEL, Long.valueOf(this.timestamp))
 				.toString();
 		}
-		
 		return this.jsonString;
 	}
 	
@@ -173,9 +197,8 @@ public class LogMessage implements Comparable<LogMessage>, JSONString
 				.append(this.message)
 				.append(this.sessionId)
 				.append(this.level)
-				.build();
+				.toHashCode();
 		}
-		
 		return this.hashCode;
 	}
 
@@ -187,20 +210,18 @@ public class LogMessage implements Comparable<LogMessage>, JSONString
 	{
 		if (other instanceof LogMessage)
 		{
+			final LogMessage otherMessage = (LogMessage) other;
 			return new EqualsBuilder()
 				.appendSuper(super.equals(other))
-				.append(this.timestamp, ((LogMessage) other).timestamp)
-				.append(this.message, ((LogMessage) other).message)
-				.append(this.sessionId, ((LogMessage) other).sessionId)
-				.append(this.level, ((LogMessage) other).level)
-				.build();
+				.append(this.timestamp, otherMessage.timestamp)
+				.append(this.message, otherMessage.message)
+				.append(this.sessionId, otherMessage.sessionId)
+				.append(this.level, otherMessage.level)
+				.isEquals();
 		}
 		else
 		{
 			return false;
 		}
-		
 	}
-	
-	
 }
