@@ -195,7 +195,7 @@ public class VisionServiceRequest implements Callable<String>
 			return new StringBuilder(VisionServiceRequest.WEB_ADDRESS)
 					.append(this.urlPostFix)
 					.append(VisionServiceRequest.SUB_KEY_PREFIX)
-					//.append(apiKey.getKeyValue())
+					.append(apiKey.getKeyValue())
 					.toString();
 		}
 	}
