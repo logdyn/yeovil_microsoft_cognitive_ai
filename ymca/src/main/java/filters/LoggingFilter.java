@@ -2,8 +2,6 @@ package filters;
 
 import java.io.IOException;
 import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -21,7 +19,6 @@ import models.LogMessage;
  */
 public class LoggingFilter implements Filter
 {
-	private static final Pattern ERROR_DESC = Pattern.compile("<b>description<\\/b>\\s*(?:<.*?>)*(.*?)(?:<\\/.*?>)*\\s*<\\/p>");
 	/**
 	 * @see Filter#destroy()
 	 */
@@ -43,23 +40,13 @@ public class LoggingFilter implements Filter
 		}
 		catch (final Throwable e)
 		{
-			final String error;
-			Matcher descMatcher = LoggingFilter.ERROR_DESC.matcher(e.getMessage());
-			if(descMatcher.matches())
-			{
-				error = descMatcher.group(1);
-			}
-			else
-			{
-				error = e.getMessage();
-			}
 			if (request instanceof HttpServletRequest)
 			{
-				LoggingEndpoint.log(new LogMessage((HttpServletRequest) request, Level.SEVERE, error));
+				LoggingEndpoint.log(new LogMessage((HttpServletRequest) request, Level.SEVERE, e.getLocalizedMessage()));
 			}
 			else
 			{
-				LoggingEndpoint.log(new LogMessage(Level.SEVERE, error));
+				LoggingEndpoint.log(new LogMessage(Level.SEVERE, e.getLocalizedMessage()));
 			}
 			throw e;
 		}
