@@ -1,11 +1,15 @@
 package endpoints;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 
 import javax.websocket.CloseReason;
@@ -17,6 +21,7 @@ import javax.websocket.Session;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import models.LogMessage;
 
@@ -25,87 +30,90 @@ import models.LogMessage;
  * 
  * @author Jake Lewis
  */
-public class LoggingEndpoint extends Endpoint
+public class LoggingEndpoint extends Endpoint implements MessageHandler.Whole<Reader>
 {
 
-	private static Map<String, Set<LoggingEndpoint>> endpoints = new HashMap<>();
-	private static Map<String, SortedSet<LogMessage>> messages = new HashMap<>();
+	private static final Map<String, Set<Session>> ENDPOINTS = new HashMap<>();
+	private static final Map<String, SortedSet<LogMessage>> MESSAGES = new HashMap<>();
 	private Session session;
-	private String sessionId;
+	private String httpSessionId;
 
 	@Override
 	public void onOpen(final Session session, final EndpointConfig config)
 	{
 		this.session = session;
-		session.addMessageHandler(new MessageHandler.Whole<String>()
+		session.addMessageHandler(Reader.class, this);
+		try
 		{
-			@Override
-			public void onMessage(final String jsonString)
+			session.getAsyncRemote().setBatchingAllowed(false);
+		}
+		catch (IOException ioe)
+		{
+			LoggingEndpoint.logToClient(session, new LogMessage(Level.WARNING, ioe.getMessage()).toJSONString());
+		}
+	}
+	
+	@Override
+	public void onMessage(final Reader jsonString)
+	{
+		final JSONObject jsonObject = new JSONObject(new JSONTokener(jsonString));
+		
+		if (jsonObject.has("httpSessionId"))
+		{
+			this.httpSessionId = jsonObject.getString("httpSessionId");
+			Set<Session> set = LoggingEndpoint.ENDPOINTS.get(this.httpSessionId);
+			if (null == set)
 			{
-				JSONObject jsonObject = new JSONObject(jsonString);
-				
-				if (jsonObject.has("httpSessionId"))
-				{
-					LoggingEndpoint.this.sessionId = jsonObject.getString("httpSessionId");
-					Set<LoggingEndpoint> set = LoggingEndpoint.endpoints.get(LoggingEndpoint.this.sessionId);
-
-					if (null == set)
-					{
-						set = new HashSet<>();
-						LoggingEndpoint.endpoints.put(LoggingEndpoint.this.sessionId, set);
-					}
-
-					set.add(LoggingEndpoint.this);
-
-					final SortedSet<LogMessage> messageQueue = LoggingEndpoint.messages.get(LoggingEndpoint.this.sessionId);
-					
-					if (null != messageQueue && !messageQueue.isEmpty())
-					{
-						LoggingEndpoint.logToClient(LoggingEndpoint.this, new JSONArray(messageQueue).toString());
-					}
-				}
-				else
-				{					
-					try
-					{
-						jsonObject.put("sessionId", LoggingEndpoint.this.sessionId);
-						LogMessage logMessage = new LogMessage(jsonObject);
-						queueMessage(logMessage);
-						
-						for (LoggingEndpoint endpoint : LoggingEndpoint.endpoints.get(LoggingEndpoint.this.sessionId))
-						{
-							if (!LoggingEndpoint.this.equals(endpoint))
-							{
-								logToClient(endpoint, logMessage.toJSONString());
-							}
-						}
-					}
-					catch (JSONException ex)
-					{
-						log(new LogMessage(Level.WARNING, ex.getMessage()));
-					}
-				}
-				
+				set = new HashSet<>();
+				LoggingEndpoint.ENDPOINTS.put(this.httpSessionId, set);
 			}
-		});
+			set.add(this.session);
+			
+			final SortedSet<LogMessage> messageQueue = LoggingEndpoint.MESSAGES.get(this.httpSessionId);
+			if (null != messageQueue && !messageQueue.isEmpty())
+			{
+				LoggingEndpoint.logToClient(this.session, new JSONArray(messageQueue).toString());
+			}
+			LoggingEndpoint.log(new LogMessage(this.httpSessionId, Level.FINER, String.format("Logging Session with id '%s' opened", this.session.getId())));
+		}
+		else
+		{
+			try
+			{
+				jsonObject.put("sessionId", this.httpSessionId);
+				final LogMessage logMessage = new LogMessage(jsonObject);
+				LoggingEndpoint.queueMessage(logMessage);
+				
+				for (Session websocketSession : LoggingEndpoint.ENDPOINTS.get(this.httpSessionId))
+				{
+					if (!this.session.equals(websocketSession))
+					{
+						LoggingEndpoint.logToClient(websocketSession, logMessage.toJSONString());
+					}
+				}
+			}
+			catch (JSONException ex)
+			{
+				LoggingEndpoint.log(new LogMessage(this.httpSessionId, Level.WARNING, ex.getMessage()));
+			}
+		}
+		
 	}
 
-	/**
-	 * Event that is triggered when a session has closed.
-	 *
-	 * @param session
-	 *            The session
-	 * @param closeReason
-	 *            Why the session was closed
-	 */
 	@Override
 	public void onClose(final Session session, final CloseReason closeReason)
 	{
-		final Set<LoggingEndpoint> set = LoggingEndpoint.endpoints.get(this.sessionId);
-		set.remove(this);
+		final Set<Session> set = LoggingEndpoint.ENDPOINTS.get(this.httpSessionId);
+		set.remove(session);
+		final LogMessage message = new LogMessage(this.httpSessionId, Level.FINER, String.format("Logging session with id '%s' closed", session.getId()));
+		LoggingEndpoint.queueMessage(message);
 		if (set.isEmpty())
 		{
-			LoggingEndpoint.endpoints.remove(this.sessionId);
+			LoggingEndpoint.ENDPOINTS.remove(this.httpSessionId);
+		}
+		else
+		{
+			LoggingEndpoint.logToClient(set, message);
 		}
 	}
 
@@ -121,7 +129,7 @@ public class LoggingEndpoint extends Endpoint
 	/**
 	 * Logs a message to the endpoint for that message, if no message is specified it will log to all endpoints
 	 * @param logMessage The {@link LogMessage} to log
-	 * @param queue Boolean value, if true queue the message
+	 * @param queue boolean value, if true queue the message
 	 */
 	public static void log(final LogMessage logMessage, final boolean queue)
 	{
@@ -130,42 +138,48 @@ public class LoggingEndpoint extends Endpoint
 		// If sessionID is not specified, notify all endpoints
 		if (null == sessionId)
 		{
-			for (final Set<LoggingEndpoint> endpoints : LoggingEndpoint.endpoints.values())
+			for (final Set<Session> websocketSessions : LoggingEndpoint.ENDPOINTS.values())
 			{
-				logToClient(endpoints, logMessage);
+				LoggingEndpoint.logToClient(websocketSessions, logMessage);
 			}
 
 			// Queue message for all sessions
 			if (queue)
 			{
-				queueMessageToAll(logMessage);
+				LoggingEndpoint.queueMessageToAll(logMessage);
 			}
 		}
 		else
 		{
-			final Set<LoggingEndpoint> sessionEndpoints = LoggingEndpoint.endpoints.get(sessionId);
-			if (null != sessionEndpoints)
+			final Set<Session> websocketSessions = LoggingEndpoint.ENDPOINTS.get(sessionId);
+			if (null != websocketSessions)
 			{
-				logToClient(sessionEndpoints, logMessage);
+				LoggingEndpoint.logToClient(websocketSessions, logMessage);
 
 				if (queue)
 				{
-					queueMessage(logMessage);
+					LoggingEndpoint.queueMessage(logMessage);
 				}
 			}
 			else
 			{
-				System.err.println(String.format("No LoggingEndpoints registered for session '%s'", sessionId));
-				System.err.println(logMessage);
-				LoggingEndpoint.log(new LogMessage(Level.WARNING, 
+				LoggingEndpoint.log(new LogMessage(Level.WARNING,
 						String.format("No LoggingEndpoints registered for session '%s'", sessionId)));
 			}
+		}
+		if (logMessage.getLevel().intValue() > Level.WARNING.intValue())
+		{
+			System.err.println(logMessage);
+		}
+		else
+		{
+			System.out.println(logMessage);
 		}
 	}
 
 	private static void queueMessageToAll(final LogMessage logMessage)
 	{
-		for (final SortedSet<LogMessage> messageSet : LoggingEndpoint.messages.values())
+		for (final SortedSet<LogMessage> messageSet : LoggingEndpoint.MESSAGES.values())
 		{
 			messageSet.add(logMessage);
 		}
@@ -175,17 +189,17 @@ public class LoggingEndpoint extends Endpoint
 	/**
 	 * Adds a message to the queue of messages for that session ID
 	 * 
-	 * @param sessionId The HTTP session ID
+	 * @param httpSessionId The HTTP session ID
 	 * @param logMessage The {@link LogMessage} to queue
 	 */
 	private static void queueMessage(final LogMessage logMessage)
 	{
-		SortedSet<LogMessage> messageQueue = LoggingEndpoint.messages.get(logMessage.getSessionId());
+		SortedSet<LogMessage> messageQueue = LoggingEndpoint.MESSAGES.get(logMessage.getSessionId());
 
 		if (null == messageQueue)
 		{
 			messageQueue = new TreeSet<>();
-			LoggingEndpoint.messages.put(logMessage.getSessionId(), messageQueue);
+			LoggingEndpoint.MESSAGES.put(logMessage.getSessionId(), messageQueue);
 		}
 
 		messageQueue.add(logMessage);
@@ -194,17 +208,14 @@ public class LoggingEndpoint extends Endpoint
 	/**
 	 * Logs the JSON message to every provided endpoint
 	 * 
-	 * @param endpoints The endpoints to send the message to
+	 * @param websocketSessions The endpoints to send the message to
 	 * @param message The message
 	 */
-	private static void logToClient(final Set<LoggingEndpoint> endpoints, final LogMessage message)
+	private static void logToClient(final Collection<Session> websocketSessions, final LogMessage message)
 	{
-		if (null != endpoints)
+		for (final Session websocketSession : websocketSessions)
 		{
-			for (final LoggingEndpoint endpoint : endpoints)
-			{
-				logToClient(endpoint, message.toJSONString());
-			}
+			LoggingEndpoint.logToClient(websocketSession, message.toJSONString());
 		}
 	}
 
@@ -216,13 +227,13 @@ public class LoggingEndpoint extends Endpoint
 	 * @param jsonArray
 	 *            A JSON array of log messages
 	 */
-	private static void logToClient(final LoggingEndpoint endpoint, final String message)
+	private static Future<Void> logToClient(final Session session, final String message)
 	{
-		endpoint.session.getAsyncRemote().sendText(message);
+		return session.getAsyncRemote().sendText(message);
 	}
 
 	public static void clearSession(final String id)
 	{
-		LoggingEndpoint.messages.remove(id);
+		LoggingEndpoint.MESSAGES.remove(id);
 	}
 }

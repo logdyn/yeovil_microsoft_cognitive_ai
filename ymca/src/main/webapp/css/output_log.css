@@ -4,11 +4,12 @@
 	bottom: 0;
 	width: 98%;
 	width: calc(100% - 32px);
-	max-height: 92%;
-	max-height: calc(100% - 33px);
+	max-height: 87.5%;
+	max-height: calc(100% - 56px);
 	background-color: black;
 	border: 0;
 	overflow: auto;
+	white-space: normal;
 }
 .logElement .text-config,
 .logElement .text-finer,
@@ -23,7 +24,7 @@
 .logElement.hide-config .text-config,
 .logElement.hide-fine .text-success,
 .logElement.hide-finer .text-finer,
-.logElement.hide-finest .text-finer,
+.logElement.hide-finest .text-finest,
 .logElement.hide-timestamp .timestamp
 {
     display: none;

@@ -42,11 +42,11 @@ public class LoggingFilter implements Filter
 		{
 			if (request instanceof HttpServletRequest)
 			{
-				LoggingEndpoint.log(new LogMessage((HttpServletRequest) request, Level.SEVERE, e.getMessage()));
+				LoggingEndpoint.log(new LogMessage((HttpServletRequest) request, Level.SEVERE, e.getLocalizedMessage()));
 			}
 			else
 			{
-				LoggingEndpoint.log(new LogMessage(Level.SEVERE, e.getMessage()));
+				LoggingEndpoint.log(new LogMessage(Level.SEVERE, e.getLocalizedMessage()));
 			}
 			throw e;
 		}

@@ -31,7 +31,13 @@ var xhttp =
                 }
                 else
                 {
-                    loggingEndpoint.log('WARNING', address + ' responded with: ' + this.responseText);
+                    var description = /<b>description<\/b>\s*(?:<.*?>)*(.*?)(?:<\/.*?>)*\s*<\/p>/gm.exec(this.responseText);
+                    var errorMsg = this.responseText;
+                    if(description != null)
+                    {
+                        errorMsg = description[1];
+                    }   
+                	loggingEndpoint.log({level:'WARNING', message:(address + ' responded with: ' + errorMsg)});
                 }
 			}
 		}
