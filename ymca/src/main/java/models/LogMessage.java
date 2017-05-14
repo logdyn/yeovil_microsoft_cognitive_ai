@@ -212,7 +212,6 @@ public class LogMessage implements Comparable<LogMessage>, JSONString
 		{
 			final LogMessage otherMessage = (LogMessage) other;
 			return new EqualsBuilder()
-				.appendSuper(super.equals(other))
 				.append(this.timestamp, otherMessage.timestamp)
 				.append(this.message, otherMessage.message)
 				.append(this.sessionId, otherMessage.sessionId)
