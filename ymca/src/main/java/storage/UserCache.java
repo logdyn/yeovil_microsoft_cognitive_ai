@@ -157,7 +157,7 @@ public class UserCache
 		                + "ON CONFLICT (user_id) DO UPDATE SET user_name = EXCLUDED.user_name, user_pass=EXCLUDED.user_pass, forename=EXCLUDED.forename, surname=EXCLUDED.surname, address_id=EXCLUDED.address_id;",
 		        user.getUuid(), user.getUsername(), user.getDigest().toString(), user.getForename(), user.getSurname(),
 		        user.getAddress().getId());
-		run.update("DELETE FROM user_roles WHERE user_name=?;", user.getUsername());
+		run.update(String.format("DELETE FROM user_roles WHERE (user_name=? AND role_name IN (%s));", Database.toSQLArray(user.getRole().inverseDatabaseValues())), user.getUsername());
 		for (final String rolename : user.getRole().toDatabaseValues())
 		{
 			run.update(

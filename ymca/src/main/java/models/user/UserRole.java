@@ -81,6 +81,18 @@ public enum UserRole
 	}
 	
 	/**
+	 * Create a set of role names not part of this role. 
+	 * 
+	 * @return set of role names
+	 */
+	public Set<String> inverseDatabaseValues()
+	{
+		final Set<String> result = new LinkedHashSet<>(ADMIN.toDatabaseValues());
+		result.removeAll(this.dbValues);
+		return result;
+	}
+	
+	/**
 	 * Recursively searches for the highest value role that is a parent of this role.
 	 * 
 	 * @param names the names of roles to search for.
