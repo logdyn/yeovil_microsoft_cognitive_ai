@@ -2,7 +2,10 @@ package storage;
 
 import java.util.Collection;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -131,9 +134,27 @@ public class Database
 		}
 
 		@Override
-		protected void afterExecute(final Runnable r, final Throwable t)
+		protected void afterExecute(final Runnable r, Throwable t)
 		{
-			super.afterExecute(r, t);
+			if (null == t && r instanceof Future)
+			{
+				try
+				{
+					((Future<?>) r).get();
+				}
+				catch (CancellationException ce)
+				{
+					t = ce;
+				}
+				catch (ExecutionException ee)
+				{
+					t = ee.getCause();
+				}
+				catch (InterruptedException e)
+				{
+					Thread.currentThread().interrupt();
+				}
+			}
 			if (null != t)
 			{
 				LoggingEndpoint.log(new LogMessage(Level.SEVERE, t.getLocalizedMessage()));
