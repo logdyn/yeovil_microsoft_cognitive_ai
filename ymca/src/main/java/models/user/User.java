@@ -1,11 +1,10 @@
 package models.user;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.UUID;
-
+import models.Address;
 import org.json.JSONObject;
 
-import models.Address;
+import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
 
 public class User
 {
@@ -113,7 +112,7 @@ public class User
 				this.id = UUID.fromString(idString);
 			}
 			
-			this.username = user.getString("username");
+			this.username = user.optString("username", this.username);
 			if (user.has("password"))
 			{
 				this.digest = Digest.fromPlainText(user.getString("password"));

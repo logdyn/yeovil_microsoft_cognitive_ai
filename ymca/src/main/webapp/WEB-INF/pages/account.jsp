@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<%@page import="java.util.UUID"%>
-<%@page import="storage.UserCache"%>
 <%@page import="models.user.User"%>
+<%@page import="java.util.UUID"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
@@ -32,9 +31,9 @@
 		<script language="javascript">
 			function sendUser()
 			{
-				var formData = {<%if (userID != null){ %>userid:'<%= userID%>'<%}%>};
+				var formData = {};
 				var inputs = document.getElementById('userForm').getElementsByTagName('input');
-				for (var i = 0; i < inputs.length; i++)
+				for (var i = 0; i &lt; inputs.length; i++)
 				{
 					formData[inputs[i].name] = encodeURIComponent(inputs[i].value);
 				}
@@ -53,7 +52,6 @@
 					}
 				});
 			}
-		
 		</script>
 	</head>
 	<body>
@@ -84,18 +82,20 @@
 			%>
 			<div class="col-sm-6 col-sm-offset-3">
 				<form id="userForm" method="post">
-					<div class="form-group">
-						<%=getUserAttribute(isEditing, "Username", editUser==null?null:editUser.getUsername())%>
-					</div>
-					<%	if(editUser == null)
-						{
-							%><div class="form-group">
-								<%=getUserAttribute(isEditing, "Password", "User password here", "password")%>
-							</div>
-							<div class="form-group">
-								<%=getUserAttribute(isEditing, "Confirm Password", "User password here", "password")%>
-							</div><%
-						}%>
+					<input type="hidden" name="userid" value="<%= userID%>">
+					<%
+					if(editUser == null)
+					{%>
+                        <div class="form-group">
+                            <%=getUserAttribute(isEditing, "Username", "")%>
+                        </div>
+                        <div class="form-group">
+							<%=getUserAttribute(isEditing, "Password", "User password here", "password")%>
+						</div>
+						<div class="form-group">
+							<%=getUserAttribute(isEditing, "Confirm Password", "User password here", "password")%>
+						</div><%
+					}%>
 					<div class="form-group">
 						<%=getUserAttribute(isEditing, "Forename", editUser==null?null:editUser.getForename())%>
 					</div>
