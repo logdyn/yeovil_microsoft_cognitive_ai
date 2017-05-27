@@ -23,14 +23,14 @@ public class LogMessage implements Comparable<LogMessage>, JSONString
 	private static final String MESSAGE_LABEL = "message";
 	private static final String LEVEL_LABEL = "level";
 	private static final String SESSION_ID_LABEL = "sessionId";
-	
+
 	private static final Level DEFAULT_LEVEL = Level.FINE;
-	
+
 	private final String sessionId;
 	private final Level level;
 	private final String message;
 	private final long timestamp;
-	
+
 	private String jsonString;
 	private int hashCode = -1;
 	
@@ -79,15 +79,35 @@ public class LogMessage implements Comparable<LogMessage>, JSONString
 		this(sessionId, level, message, TimeFactory.currentTimeMillis());
 	}
 	
-	public LogMessage(final JSONObject jsonObject) throws JSONException
+	/**
+	 * Class Constructor.
+	 *
+	 * @param jsonObject the {@link JSONObject} to generate a LogRecord from.
+	 * @throws IllegalArgumentException if there is no value for 'message'.
+	 */
+	public LogMessage(final JSONObject jsonObject) throws IllegalArgumentException
 	{
-		//get timestamp first in order to have most accurate time.
+		//get timestamp first in order to have most accurate time if parameter not included.
 		this.timestamp = jsonObject.optLong(LogMessage.TIMESTAMP_LABEL, TimeFactory.currentTimeMillis());
+		try
+		{
+			this.message = jsonObject.getString(LogMessage.MESSAGE_LABEL);
+		}
+		catch (JSONException e)
+		{
+			throw new IllegalArgumentException("Cannot create LogMessage without a 'message' parameter.", e);
+		}
 		this.sessionId = jsonObject.optString(LogMessage.SESSION_ID_LABEL, null);
 		this.level = LogMessage.parseLevel(jsonObject);
-		this.message = jsonObject.getString(LogMessage.MESSAGE_LABEL);
 	}
 	
+	/**
+	 * gets a Level from a jsonObject.
+	 * If level is not present then returns {@link #DEFAULT_LEVEL}
+	 * 
+	 * @param jsonObject the JSONObject to read from.
+	 * @return the Level stored in the jsonObject.
+	 */
 	private static final Level parseLevel(final JSONObject jsonObject)
 	{
 		final String levelName = jsonObject.optString(LogMessage.LEVEL_LABEL);

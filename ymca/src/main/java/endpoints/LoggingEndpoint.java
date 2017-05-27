@@ -3,12 +3,11 @@ package endpoints;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 
@@ -33,8 +32,8 @@ import models.LogMessage;
 public class LoggingEndpoint extends Endpoint implements MessageHandler.Whole<Reader>
 {
 
-	private static final Map<String, Set<Session>> ENDPOINTS = new HashMap<>();
-	private static final Map<String, SortedSet<LogMessage>> MESSAGES = new HashMap<>();
+	private static final Map<String, Set<Session>> ENDPOINTS = new ConcurrentHashMap<>();
+	private static final Map<String, SortedSet<LogMessage>> MESSAGES = new ConcurrentHashMap<>();
 	private Session session;
 	private String httpSessionId;
 
@@ -64,7 +63,7 @@ public class LoggingEndpoint extends Endpoint implements MessageHandler.Whole<Re
 			Set<Session> set = LoggingEndpoint.ENDPOINTS.get(this.httpSessionId);
 			if (null == set)
 			{
-				set = new HashSet<>();
+				set = ConcurrentHashMap.newKeySet(5);
 				LoggingEndpoint.ENDPOINTS.put(this.httpSessionId, set);
 			}
 			set.add(this.session);
@@ -198,7 +197,7 @@ public class LoggingEndpoint extends Endpoint implements MessageHandler.Whole<Re
 
 		if (null == messageQueue)
 		{
-			messageQueue = new TreeSet<>();
+			messageQueue = new ConcurrentSkipListSet<>();
 			LoggingEndpoint.MESSAGES.put(logMessage.getSessionId(), messageQueue);
 		}
 
