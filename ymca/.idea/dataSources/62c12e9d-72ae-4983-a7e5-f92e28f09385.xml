@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="PostgreSQL - YMCA@localhost">
+  <database-model serializer="dbm" rdbms="POSTGRES" format-version="4.2">
+    <root id="1"/>
+    <database id="2" parent="1" name="YMCA">
+      <ObjectId>40961</ObjectId>
+      <Current>1</Current>
+      <Visible>1</Visible>
+    </database>
+    <schema id="3" parent="2" name="public">
+      <ObjectId>2200</ObjectId>
+      <IntrospectionTimestamp>2017-05-27.12:04:34.163</IntrospectionTimestamp>
+      <IntrospectionStateNumber>10505</IntrospectionStateNumber>
+      <Current>1</Current>
+      <Visible>1</Visible>
+    </schema>
+    <schema id="4" parent="2" name="pg_catalog">
+      <ObjectId>11</ObjectId>
+    </schema>
+    <schema id="5" parent="2" name="pg_toast">
+      <ObjectId>99</ObjectId>
+    </schema>
+    <schema id="6" parent="2" name="pg_temp_1">
+      <ObjectId>11848</ObjectId>
+    </schema>
+    <schema id="7" parent="2" name="pg_toast_temp_1">
+      <ObjectId>11849</ObjectId>
+    </schema>
+    <schema id="8" parent="2" name="information_schema">
+      <ObjectId>12113</ObjectId>
+    </schema>
+    <table id="9" parent="3" name="key_uses">
+      <ObjectId>49157</ObjectId>
+      <StateNumber>620</StateNumber>
+    </table>
+    <table id="10" parent="3" name="keys">
+      <ObjectId>49152</ObjectId>
+      <StateNumber>619</StateNumber>
+    </table>
+    <table id="11" parent="3" name="user_roles">
+      <ObjectId>40972</ObjectId>
+      <StateNumber>618</StateNumber>
+    </table>
+    <table id="12" parent="3" name="users">
+      <ObjectId>40967</ObjectId>
+      <StateNumber>10505</StateNumber>
+    </table>
+    <column id="13" parent="9" name="key_value">
+      <Position>1</Position>
+      <DataType>char(32)|0</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>620</StateNumber>
+    </column>
+    <column id="14" parent="9" name="date_used">
+      <Position>2</Position>
+      <DataType>bigint|0</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>620</StateNumber>
+    </column>
+    <index id="15" parent="9" name="key_uses_pkey">
+      <ObjectId>49160</ObjectId>
+      <ColNames>key_value
+date_used</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <key id="16" parent="9" name="key_uses_pkey">
+      <ObjectId>49161</ObjectId>
+      <ColNames>key_value
+date_used</ColNames>
+      <UnderlyingIndexName>key_uses_pkey</UnderlyingIndexName>
+      <Primary>1</Primary>
+    </key>
+    <column id="17" parent="10" name="key_value">
+      <Position>1</Position>
+      <DataType>char(32)|0</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>619</StateNumber>
+    </column>
+    <column id="18" parent="10" name="key_type">
+      <Position>2</Position>
+      <DataType>varchar(32)|0</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>619</StateNumber>
+    </column>
+    <index id="19" parent="10" name="keys_pkey">
+      <ObjectId>49155</ObjectId>
+      <ColNames>key_value</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <key id="20" parent="10" name="keys_pkey">
+      <ObjectId>49156</ObjectId>
+      <ColNames>key_value</ColNames>
+      <UnderlyingIndexName>keys_pkey</UnderlyingIndexName>
+      <Primary>1</Primary>
+    </key>
+    <column id="21" parent="11" name="user_name">
+      <Position>1</Position>
+      <DataType>varchar(32)|0</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>617</StateNumber>
+    </column>
+    <column id="22" parent="11" name="role_name">
+      <Position>2</Position>
+      <DataType>varchar(32)|0</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>617</StateNumber>
+    </column>
+    <index id="23" parent="11" name="user_roles_pkey">
+      <ObjectId>40975</ObjectId>
+      <ColNames>user_name
+role_name</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <key id="24" parent="11" name="user_roles_pkey">
+      <ObjectId>40976</ObjectId>
+      <ColNames>user_name
+role_name</ColNames>
+      <UnderlyingIndexName>user_roles_pkey</UnderlyingIndexName>
+      <Primary>1</Primary>
+    </key>
+    <column id="25" parent="12" name="user_id">
+      <Position>1</Position>
+      <DataType>char(36)|0</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>615</StateNumber>
+    </column>
+    <column id="26" parent="12" name="user_name">
+      <Position>2</Position>
+      <DataType>varchar(32)|0</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>615</StateNumber>
+    </column>
+    <column id="27" parent="12" name="user_pass">
+      <Position>3</Position>
+      <DataType>char(105)|0</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>615</StateNumber>
+    </column>
+    <column id="28" parent="12" name="forename">
+      <Position>4</Position>
+      <DataType>varchar(32)|0</DataType>
+      <StateNumber>615</StateNumber>
+    </column>
+    <column id="29" parent="12" name="surname">
+      <Position>5</Position>
+      <DataType>varchar(32)|0</DataType>
+      <StateNumber>615</StateNumber>
+    </column>
+    <column id="30" parent="12" name="address_id">
+      <Position>6</Position>
+      <DataType>char(36)|0</DataType>
+      <StateNumber>10505</StateNumber>
+    </column>
+    <index id="31" parent="12" name="users_pkey">
+      <ObjectId>40970</ObjectId>
+      <ColNames>user_id</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <key id="32" parent="12" name="users_pkey">
+      <ObjectId>40971</ObjectId>
+      <ColNames>user_id</ColNames>
+      <UnderlyingIndexName>users_pkey</UnderlyingIndexName>
+      <Primary>1</Primary>
+    </key>
+  </database-model>
+</dataSource>
