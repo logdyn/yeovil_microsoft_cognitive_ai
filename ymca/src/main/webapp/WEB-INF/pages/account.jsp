@@ -83,12 +83,15 @@
 			<div class="col-sm-6 col-sm-offset-3">
 				<form id="userForm" method="post">
 					<input type="hidden" name="userid" value="<%= userID%>">
+					<div class="form-group">
+						<label>
+							Username:
+							<input name="Username" title="Username" value="<%= editUser==null?"":editUser.getUsername()%>" class="form-control<%=editUser==null?"":" text\" readonly=\"readonly"%>">
+						</label>
+					</div>
 					<%
 					if(editUser == null)
 					{%>
-                        <div class="form-group">
-                            <%=getUserAttribute(isEditing, "Username", "")%>
-                        </div>
                         <div class="form-group">
 							<%=getUserAttribute(isEditing, "Password", "User password here", "password")%>
 						</div>
