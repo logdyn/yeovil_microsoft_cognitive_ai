@@ -8,6 +8,8 @@ import javax.websocket.Endpoint;
 import javax.websocket.server.ServerApplicationConfig;
 import javax.websocket.server.ServerEndpointConfig;
 
+import com.logdyn.api.endpoints.LoggingEndpoint;
+
 public class WebsocketConfig implements ServerApplicationConfig
 {
 

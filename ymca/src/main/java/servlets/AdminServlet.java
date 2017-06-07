@@ -1,17 +1,11 @@
 package servlets;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.catalina.realm.DigestCredentialHandlerBase;
-import org.apache.catalina.realm.SecretKeyCredentialHandler;
-
-import storage.UserCache;
 
 /**
  * Servlet implementation class AdminServlet

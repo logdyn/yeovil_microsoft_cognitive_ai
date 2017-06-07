@@ -20,8 +20,8 @@ import javax.sql.DataSource;
 import org.apache.commons.dbutils.AsyncQueryRunner;
 import org.apache.commons.dbutils.QueryRunner;
 
-import endpoints.LoggingEndpoint;
-import models.LogMessage;
+import com.logdyn.api.endpoints.LoggingEndpoint;
+import com.logdyn.api.model.LogMessage;
 
 /**
  * Class used to connect to the database.

@@ -13,10 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 
+import com.logdyn.api.endpoints.LoggingEndpoint;
+import com.logdyn.api.model.LogMessage;
+
 import apiRequests.VisionServiceRequest;
-import endpoints.LoggingEndpoint;
 import endpoints.Observer;
-import models.LogMessage;
 
 /**
  * Servlet implementation class WebcamServlet
