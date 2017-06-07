@@ -10,8 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import endpoints.LoggingEndpoint;
-import models.LogMessage;
+import com.logdyn.api.endpoints.LoggingEndpoint;
+import com.logdyn.api.model.LogMessage;
+
 import models.modules.Module;
 import models.modules.ModuleUtils;
 

@@ -10,6 +10,10 @@
           <element id="library" level="project" name="Maven: org.json:json:20170516" />
           <element id="library" level="project" name="Maven: commons-dbutils:commons-dbutils:1.6" />
           <element id="library" level="project" name="Maven: org.apache.commons:commons-lang3:3.5" />
+          <element id="library" level="project" name="Maven: com.logdyn:logdyn-api:0.2" />
+          <element id="library" level="project" name="Maven: org.apache.maven:maven-plugin-api:2.0" />
+          <element id="library" level="project" name="Maven: org.codehaus.plexus:plexus-utils:3.0.8" />
+          <element id="library" level="project" name="Maven: javax.servlet:javax.servlet-api:3.1.0" />
         </element>
       </element>
       <element id="directory" name="META-INF">

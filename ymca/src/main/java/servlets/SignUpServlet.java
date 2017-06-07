@@ -12,8 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
-import endpoints.LoggingEndpoint;
-import models.LogMessage;
+import com.logdyn.api.endpoints.LoggingEndpoint;
+import com.logdyn.api.model.LogMessage;
+
 import models.user.User;
 import storage.UserCache;
 

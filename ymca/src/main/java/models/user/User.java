@@ -1,10 +1,11 @@
 package models.user;
 
-import models.Address;
-import org.json.JSONObject;
-
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
+
+import org.json.JSONObject;
+
+import models.Address;
 
 public class User
 {

@@ -3,7 +3,9 @@
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-catalina/9.0.0.M21/tomcat-catalina-9.0.0.M21.jar!/" />
     </CLASSES>
-    <JAVADOC />
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-catalina/9.0.0.M21/tomcat-catalina-9.0.0.M21-javadoc.jar!/" />
+    </JAVADOC>
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-catalina/9.0.0.M21/tomcat-catalina-9.0.0.M21-sources.jar!/" />
     </SOURCES>
