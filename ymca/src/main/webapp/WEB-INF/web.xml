@@ -14,7 +14,7 @@
   	<filter-name>LoggingFilter</filter-name>
   	<display-name>LoggingFilter</display-name>
   	<description></description>
-  	<filter-class>com.logdyn.api.filters.LoggingFilter</filter-class>
+  	<filter-class>com.logdyn.api.endpoints.LoggingFilter</filter-class>
   </filter>
   <filter-mapping>
   	<filter-name>LoginFilter</filter-name>
@@ -84,6 +84,12 @@
   	<description></description>
   	<servlet-class>servlets.AboutServlet</servlet-class>
   </servlet>
+  <servlet>
+  	<servlet-name>LogTest</servlet-name>
+  	<display-name>LogTest</display-name>
+  	<description></description>
+  	<servlet-class>servlets.LogTest</servlet-class>
+  </servlet>
   <servlet-mapping>
   	<servlet-name>AccountServlet</servlet-name>
   	<url-pattern>/Account</url-pattern>
@@ -119,6 +125,10 @@
   <servlet-mapping>
   	<servlet-name>AboutServlet</servlet-name>
   	<url-pattern>/About</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>LogTest</servlet-name>
+  	<url-pattern>/LogTest</url-pattern>
   </servlet-mapping>
   
   <session-config>

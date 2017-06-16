@@ -56,7 +56,7 @@ public class HomeServlet extends HttpServlet
 				}
 				else
 				{
-					LoggingEndpoint.log(new LogMessage(request, Level.WARNING, "No module found with name: " + moduleName));
+					LoggingEndpoint.log(new LogMessage(Level.WARNING, "No module found with name: " + moduleName, request));
 				}
 			}
 		}

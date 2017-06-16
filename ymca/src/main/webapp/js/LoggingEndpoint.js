@@ -8,8 +8,7 @@ var loggingEndpoint = {
 			websocket = new WebSocket(origin + "/ymca/LoggingEndpoint");
 			websocket.onopen = function() 
 			{
-				//Sets up the logger instance with the correct session ID
-				websocket.send('{"httpSessionId":"' + sessionId + '"}');
+				
 			};
 			
 			websocket.onmessage = function(message)

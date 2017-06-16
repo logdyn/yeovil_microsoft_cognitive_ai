@@ -70,15 +70,15 @@ public class SignUpServlet extends HttpServlet
 				        .fromJSON(jsonUser).build();
 				UserCache.getInstance().putUser(newUser);
 				response.put("userid", newUser.getUuid());
-				LoggingEndpoint.log(new LogMessage(req, Level.FINE, "Successfully added user '"
-				        + jsonUser.getString("username") + "' to the database."));
+				LoggingEndpoint.log(new LogMessage(Level.FINE, "Successfully added user '"
+				        + jsonUser.getString("username") + "' to the database.", req));
 			}
 			else
 			{
 				response.put("error", "The username '" + jsonUser.getString("username")
 				        + "' is already taken, please try another one.");
-				LoggingEndpoint.log(new LogMessage(req, Level.WARNING, "The username '"
-				        + jsonUser.getString("username") + "' is already taken, please try another one."));
+				LoggingEndpoint.log(new LogMessage(Level.WARNING, "The username '"
+				        + jsonUser.getString("username") + "' is already taken, please try another one.", req));
 			}
 
 		}
@@ -86,7 +86,7 @@ public class SignUpServlet extends HttpServlet
 		{
 			e.printStackTrace();
 			response.put("error", "An error happend, please contact your administrator: " + e.getMessage());
-			LoggingEndpoint.log(new LogMessage(req, Level.SEVERE, e.getMessage()));
+			LoggingEndpoint.log(new LogMessage(Level.SEVERE, e.getMessage(), req));
 		}
 		resp.getWriter().write(response.toString());
 	}

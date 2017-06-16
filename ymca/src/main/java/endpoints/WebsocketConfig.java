@@ -9,6 +9,7 @@ import javax.websocket.server.ServerApplicationConfig;
 import javax.websocket.server.ServerEndpointConfig;
 
 import com.logdyn.api.endpoints.LoggingEndpoint;
+import com.logdyn.api.endpoints.LoggingEndpointConfigurator;
 
 public class WebsocketConfig implements ServerApplicationConfig
 {
@@ -21,7 +22,7 @@ public class WebsocketConfig implements ServerApplicationConfig
 			private static final long serialVersionUID = 1L;
 
 			{
-				this.add(ServerEndpointConfig.Builder.create(LoggingEndpoint.class, "/LoggingEndpoint").build());
+				this.add(ServerEndpointConfig.Builder.create(LoggingEndpoint.class, "/LoggingEndpoint").configurator(new LoggingEndpointConfigurator()).build());
 			}
 		};
 	}
